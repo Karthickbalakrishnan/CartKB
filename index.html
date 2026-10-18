@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CartKB — Smart Shopping & AR Store Navigation</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes pulsePath {
+      0% { opacity: 0.4; transform: scaleY(0.98); }
+      50% { opacity: 1; transform: scaleY(1.02); }
+      100% { opacity: 0.4; transform: scaleY(0.98); }
+    }
+    .ar-path-glow {
+      animation: pulsePath 2s infinite ease-in-out;
+      transform-origin: bottom center;
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-[#F2F8FD] text-[#041E42] font-sans antialiased min-h-screen flex flex-col">
+
+  <!-- APP HEADER -->
+  <header class="bg-[#0071DC] text-white sticky top-0 z-50 shadow-md">
+    <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <span class="text-[#FFC220] text-2xl font-black">★</span>
+        <span class="text-xl font-bold tracking-tight">CartKB</span>
+      </div>
+      <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-blue-800 text-white text-xs px-2 py-1.5 rounded-lg border border-blue-600 font-semibold focus:outline-none">
+        <option value="en">English</option>
+        <option value="ta">தமிழ் (Tamil)</option>
+        <option value="hi">हिंदी (Hindi)</option>
+      </select>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-md mx-auto w-full flex-1 p-4 space-y-4 pb-20">
+
+    <!-- FESTIVAL OFFER BANNER -->
+    <section class="bg-gradient-to-r from-[#FFC220] to-amber-300 rounded-xl p-3.5 shadow-sm border border-amber-400 flex items-center justify-between">
+      <div class="space-y-0.5">
+        <span class="bg-[#041E42] text-[#FFC220] text-[9px] font-black uppercase px-2 py-0.5 rounded-full" id="festTag">Festival Offer</span>
+        <h3 class="text-sm font-extrabold text-[#041E42]" id="festTitle">Diwali & Pongal Super Savings</h3>
+        <p class="text-[11px] text-gray-800 font-medium" id="festDesc">Up to 40% OFF on Sweets, Puja Essentials & Kitchenware</p>
+      </div>
+      <button class="bg-[#0071DC] text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-md">Claim</button>
+    </section>
+
+    <!-- STEP 1: PRE-RIDE LIVE STOCK & VARIANT SELECTOR -->
+    <section class="bg-white rounded-xl p-4 shadow-sm border border-gray-200 space-y-3">
+      <div class="flex justify-between items-center">
+        <span class="text-xs font-bold text-[#0071DC] uppercase tracking-wider" id="step1Tag">Step 1 • Check Stock Before Bike Ride</span>
+        <span class="bg-[#2A8703] text-white text-[10px] px-2 py-0.5 rounded-full font-bold">Chennai</span>
+      </div>
+
+      <div class="relative">
+        <input type="text" id="searchInput" value="Milk" class="w-full pl-3 pr-10 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0071DC] font-medium" placeholder="Search 500+ items...">
+        <button class="absolute right-2 top-2 bg-[#0071DC] text-white p-1 rounded-md text-xs font-bold">🔍</button>
+      </div>
+
+      <!-- Categories -->
+      <div class="flex space-x-2 overflow-x-auto no-scrollbar py-1 text-xs">
+        <button class="px-3 py-1 bg-[#0071DC] text-white font-bold rounded-full whitespace-nowrap">All (500+)</button>
+        <button class="px-3 py-1 bg-gray-100 text-[#041E42] font-bold rounded-full whitespace-nowrap">🍳 Kitchen</button>
+        <button class="px-3 py-1 bg-gray-100 text-[#041E42] font-bold rounded-full whitespace-nowrap">🧼 Bathroom</button>
+        <button class="px-3 py-1 bg-gray-100 text-[#041E42] font-bold rounded-full whitespace-nowrap">🛋️ Hall</button>
+        <button class="px-3 py-1 bg-gray-100 text-[#041E42] font-bold rounded-full whitespace-nowrap">💊 Medical</button>
+      </div>
+
+      <!-- Product Variant Result -->
+      <div class="p-3 bg-blue-50/40 border border-blue-200 rounded-lg space-y-2">
+        <div class="flex justify-between items-start">
+          <div>
+            <span class="font-bold text-sm text-[#041E42]">Fresh Toned Milk</span>
+            <span class="bg-[#2A8703] text-white text-[9px] px-1.5 py-0.5 rounded font-bold ml-2">In Stock</span>
+            <p class="text-xs text-gray-500">Dairy • Main Street Supercenter (0.8 km)</p>
+          </div>
+          <span class="text-xs font-black text-[#0071DC]">Aisle 1A • Bay 2</span>
+        </div>
+
+        <div class="flex items-center justify-between pt-1 border-t border-blue-100">
+          <span class="text-xs font-bold text-gray-600">Size:</span>
+          <div class="flex space-x-1.5">
+            <button onclick="addVariant('Milk 250ml', '₹18', 'Aisle 1A')" class="px-2 py-1 bg-white border border-gray-300 rounded text-xs font-bold">250ml (₹18)</button>
+            <button onclick="addVariant('Milk 1/2L (500ml)', '₹32', 'Aisle 1A')" class="px-2 py-1 bg-[#FFC220] border border-amber-400 rounded text-xs font-bold text-[#041E42]">1/2L (₹32)</button>
+            <button onclick="addVariant('Milk 1L', '₹60', 'Aisle 1A')" class="px-2 py-1 bg-white border border-gray-300 rounded text-xs font-bold">1L (₹60)</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 2: ACTIVE SHOPPING LIST -->
+    <section class="bg-white rounded-xl p-4 shadow-sm border border-gray-200 space-y-3">
+      <div class="flex justify-between items-center">
+        <span class="text-xs font-bold text-[#0071DC] uppercase tracking-wider" id="step2Tag">Step 2 • Active Shopping List</span>
+        <span class="text-xs text-gray-500 font-bold">Auto-Mapped to Aisles</span>
+      </div>
+
+      <div id="activeCartList" class="space-y-2">
+        <div class="flex justify-between items-center p-2.5 bg-gray-50 rounded-lg border border-gray-200 text-xs font-medium">
+          <div>
+            <p class="font-bold text-[#041E42]">🥛 Milk 1/2L (500ml)</p>
+            <p class="text-[10px] text-gray-500">Dairy Section</p>
+          </div>
+          <span class="bg-blue-100 text-[#0071DC] px-2 py-1 rounded-full font-bold">Aisle 1A • Bay 2</span>
+        </div>
+        <div class="flex justify-between items-center p-2.5 bg-gray-50 rounded-lg border border-gray-200 text-xs font-medium">
+          <div>
+            <p class="font-bold text-[#041E42]">🍎 Apple Cider Vinegar 250ml</p>
+            <p class="text-[10px] text-gray-500">Kitchen & Grocery</p>
+          </div>
+          <span class="bg-blue-100 text-[#0071DC] px-2 py-1 rounded-full font-bold">Aisle 2B • Bay 4</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 3: AR CAMERA WAYFINDER -->
+    <section class="bg-[#041E42] text-white rounded-xl p-4 shadow-md space-y-3">
+      <div class="flex justify-between items-center">
+        <span class="text-xs font-bold text-[#FFC220] uppercase tracking-wider" id="step3Tag">Step 3 • In-Store Navigation</span>
+        <span class="bg-[#2A8703] text-white text-[10px] px-2 py-0.5 rounded-full font-bold">AR Ready</span>
+      </div>
+
+      <p class="text-xs font-medium text-gray-200">Current Target: <strong class="text-[#FFC220]">Apple Cider Vinegar 250ml</strong></p>
+
+      <div id="arViewfinder" class="relative h-48 bg-gray-900 rounded-lg overflow-hidden border-2 border-[#FFC220] flex flex-col justify-between p-3">
+        <div class="absolute inset-0 opacity-25 bg-[radial-gradient(#FFC220_1px,transparent_1px)] [background-size:16px_16px]"></div>
+
+        <div class="relative z-10 self-center bg-white/95 text-[#041E42] px-3 py-1.5 rounded-lg shadow-lg text-center border border-[#FFC220]">
+          <p class="text-[9px] font-bold text-[#0071DC] uppercase">In-Store Target</p>
+          <p class="text-xs font-black">Aisle 2B • Bay 4 • Shelf 3</p>
+        </div>
+
+        <div class="relative z-0 h-20 w-full flex justify-center items-end">
+          <div class="w-16 h-full bg-gradient-to-t from-[#FFC220] to-transparent opacity-85 rounded-t-full ar-path-glow border-x-2 border-yellow-200"></div>
+        </div>
+
+        <div class="relative z-10 bg-black/80 backdrop-blur-sm p-1.5 rounded-lg text-center text-[11px] text-yellow-300 font-bold border border-yellow-500/30">
+          🚶 Walk 6 meters forward • Look at left shelf
+        </div>
+      </div>
+
+      <button onclick="alert('Item collected! Moving to next target.')" class="w-full bg-[#FFC220] text-[#041E42] py-2.5 rounded-full font-extrabold text-xs shadow-md">
+        Item Collected! Next Target
+      </button>
+    </section>
+
+    <!-- STEP 4: EXPRESS SCAN & PAY -->
+    <section class="bg-white rounded-xl p-4 shadow-sm border border-gray-200 space-y-3">
+      <div class="flex justify-between items-center">
+        <span class="text-xs font-bold text-[#0071DC] uppercase tracking-wider" id="step4Tag">Step 4 • Skip Billing Lines</span>
+        <span class="bg-[#2A8703] text-white text-[10px] px-2 py-0.5 rounded-full font-bold">Express Self-Pay</span>
+      </div>
+
+      <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+        <div>
+          <p class="text-xs text-gray-500">Cart Total (2 items)</p>
+          <p class="text-base font-extrabold text-[#041E42]">₹177.00</p>
+        </div>
+        <button onclick="document.getElementById('exitPass').classList.remove('hidden')" class="bg-[#2A8703] text-white px-5 py-2 rounded-full font-bold text-xs shadow-md">
+          Pay via UPI
+        </button>
+      </div>
+
+      <div id="exitPass" class="hidden p-3 bg-green-50 border border-green-200 rounded-lg text-center space-y-2">
+        <p class="text-xs font-bold text-[#2A8703]">✓ Payment Successful! Show QR at Express Exit Gate</p>
+        <div class="w-20 h-20 bg-white border-2 border-gray-800 mx-auto flex items-center justify-center font-mono text-[9px] text-gray-600 rounded">
+          [ EXIT PASS QR ]
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const translations = {
+      en: {
+        step1Tag: "Step 1 • Check Stock Before Bike Ride",
+        step2Tag: "Step 2 • Active Shopping List",
+        step3Tag: "Step 3 • In-Store Navigation",
+        step4Tag: "Step 4 • Skip Billing Lines"
+      },
+      ta: {
+        step1Tag: "படி 1 • பைக்கில் கிளம்புவதற்கு முன் இருப்பை பார்க்கவும்",
+        step2Tag: "படி 2 • உங்கள் ஷாப்பிங் பட்டியல்",
+        step3Tag: "படி 3 • கடையில் வழிசெலுத்தல் (AR)",
+        step4Tag: "படி 4 • நீண்ட வரிசைகளை தவிர்க்கவும்"
+      },
+      hi: {
+        step1Tag: "चरण 1 • बाइक से जाने से पहले स्टॉक जांचें",
+        step2Tag: "चरण 2 • सक्रिय खरीदारी सूची",
+        step3Tag: "चरण 3 • स्टोर में दिशा-निर्देश (AR)",
+        step4Tag: "चरण 4 • लंबी लाइनों से बचें"
+      }
+    };
+
+    function changeLanguage(lang) {
+      const t = translations[lang] || translations.en;
+      document.getElementById('step1Tag').innerText = t.step1Tag;
+      document.getElementById('step2Tag').innerText = t.step2Tag;
+      document.getElementById('step3Tag').innerText = t.step3Tag;
+      document.getElementById('step4Tag').innerText = t.step4Tag;
+    }
+
+    function addVariant(name, price, aisle) {
+      const list = document.getElementById('activeCartList');
+      const div = document.createElement('div');
+      div.className = "flex justify-between items-center p-2.5 bg-gray-50 rounded-lg border border-gray-200 text-xs font-medium";
+      div.innerHTML = `
+        <div>
+          <p class="font-bold text-[#041E42]">🛒 ${name}</p>
+          <p class="text-[10px] text-gray-500">Added Item • ${price}</p>
+        </div>
+        <span class="bg-blue-100 text-[#0071DC] px-2 py-1 rounded-full font-bold">${aisle} • Bay 1</span>
+      `;
+      list.prepend(div);
+      alert(name + " added to your list!");
+    }
+  </script>
+</body>
+</html>
