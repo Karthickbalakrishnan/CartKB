@@ -1,224 +1,1291 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CartKB — Smart Shopping & AR Store Navigation</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    @keyframes pulsePath {
-      0% { opacity: 0.4; transform: scaleY(0.98); }
-      50% { opacity: 1; transform: scaleY(1.02); }
-      100% { opacity: 0.4; transform: scaleY(0.98); }
-    }
-    .ar-path-glow {
-      animation: pulsePath 2s infinite ease-in-out;
-      transform-origin: bottom center;
-    }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CartKB — Smart Shopping, Your Way</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        walmart: {
+                            blue: '#0071DC',
+                            navy: '#041E42',
+                            yellow: '#FFC220',
+                            yellowHover: '#E0A812',
+                            bg: '#F2F8FD',
+                            green: '#2A8703',
+                            grayLight: '#F3F4F6',
+                            border: '#E6E6E6'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #041E42;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        /* Mobile Viewport Container */
+        .app-container {
+            max-width: 430px;
+            height: 880px;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 40px rgba(0, 113, 220, 0.35);
+        }
+
+        @media (max-width: 640px) {
+            .app-container {
+                max-width: 100vw;
+                height: 100vh;
+                border-radius: 0 !important;
+                border: none !important;
+            }
+        }
+
+        /* AR Path Animation */
+        @keyframes arPathPulse {
+            0% { opacity: 0.4; transform: scaleY(0.96); }
+            50% { opacity: 0.95; transform: scaleY(1.03); }
+            100% { opacity: 0.4; transform: scaleY(0.96); }
+        }
+
+        .ar-animated-path {
+            animation: arPathPulse 1.8s infinite ease-in-out;
+            transform-origin: bottom center;
+        }
+
+        @keyframes pinFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+
+        .ar-pin-float {
+            animation: pinFloat 2.2s infinite ease-in-out;
+        }
+
+        /* Custom Scrollbars */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #F2F8FD; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+    </style>
 </head>
-<body class="bg-[#F2F8FD] text-[#041E42] font-sans antialiased min-h-screen flex flex-col">
+<body class="flex items-center justify-center min-h-screen p-0 sm:p-4">
 
-  <!-- APP HEADER -->
-  <header class="bg-[#0071DC] text-white sticky top-0 z-50 shadow-md">
-    <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center space-x-2">
-        <span class="text-[#FFC220] text-2xl font-black">★</span>
-        <span class="text-xl font-bold tracking-tight">CartKB</span>
-      </div>
-      <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-blue-800 text-white text-xs px-2 py-1.5 rounded-lg border border-blue-600 font-semibold focus:outline-none">
-        <option value="en">English</option>
-        <option value="ta">தமிழ் (Tamil)</option>
-        <option value="hi">हिंदी (Hindi)</option>
-      </select>
+    <!-- Mobile Application Phone Shell -->
+    <div class="app-container w-full bg-walmart-bg rounded-none sm:rounded-[40px] overflow-hidden flex flex-col relative border-0 sm:border-[8px] sm:border-slate-800">
+        
+        <!-- OS Status Bar -->
+        <div class="bg-walmart-blue text-white px-6 pt-2 pb-1 flex justify-between items-center text-xs font-semibold z-50 shrink-0">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1.5">
+                <i class="fa-solid fa-signal text-[10px]"></i>
+                <i class="fa-solid fa-wifi text-[10px]"></i>
+                <i class="fa-solid fa-battery-full text-xs"></i>
+            </div>
+        </div>
+
+        <!-- App Header & Navigation Bar -->
+        <header id="app-header" class="bg-walmart-blue text-white px-4 py-2.5 flex items-center justify-between shadow-sm z-40 shrink-0">
+            <div class="flex items-center space-x-2">
+                <button id="header-back-btn" onclick="handleHeaderBack()" class="w-8 h-8 flex items-center justify-center text-white text-sm rounded-full hover:bg-white/10 hidden">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <div class="flex items-center space-x-2">
+                    <div class="w-7 h-7 bg-walmart-yellow rounded-full flex items-center justify-center text-walmart-navy font-black text-xs shadow-sm">
+                        <i class="fa-solid fa-sparkles"></i>
+                    </div>
+                    <span class="text-xl font-extrabold tracking-tight">Cart<span class="text-walmart-yellow">KB</span></span>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <!-- Language Trigger Pill -->
+                <button onclick="openLanguageModal()" class="bg-white/15 hover:bg-white/25 text-white text-xs font-extrabold px-3 py-1 rounded-full border border-white/20 flex items-center space-x-1.5 transition-all">
+                    <i class="fa-solid fa-globe text-[11px] text-walmart-yellow"></i>
+                    <span id="active-lang-code">EN</span>
+                    <i class="fa-solid fa-chevron-down text-[9px] opacity-70"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Active Store Context Ribbon -->
+        <div id="store-context-ribbon" class="bg-walmart-navy text-white px-4 py-1.5 text-xs flex justify-between items-center z-30 shrink-0 hidden shadow-inner">
+            <div class="flex items-center space-x-2 truncate pr-2">
+                <i class="fa-solid fa-store text-walmart-yellow text-xs"></i>
+                <span id="context-store-name" class="font-bold truncate text-[11px]">Main Street Supercenter</span>
+            </div>
+            <span class="bg-walmart-green text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0" data-i18n="badge_in_stock">In Stock</span>
+        </div>
+
+        <!-- MAIN SCROLLABLE VIEWPORT -->
+        <main id="main-viewport" class="flex-1 overflow-y-auto custom-scroll relative flex flex-col">
+
+            <!-- ================================================================= -->
+            <!-- SCREEN 0: LANDING DUAL JOURNEY ("WHERE ARE YOU SHOPPING FROM?")  -->
+            <!-- ================================================================= -->
+            <section id="screen-landing" class="p-4 space-y-4 flex-1 flex flex-col justify-between">
+                
+                <div class="space-y-4">
+                    <!-- Hero Branding Box -->
+                    <div class="bg-gradient-to-b from-walmart-blue to-blue-700 text-white rounded-3xl p-5 shadow-md relative overflow-hidden text-center space-y-2">
+                        <div class="w-12 h-12 bg-walmart-yellow text-walmart-navy rounded-2xl flex items-center justify-center text-xl font-black mx-auto shadow-md">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                        </div>
+                        <h1 class="text-xl font-black tracking-tight" data-i18n="landing_hero_title">Where are you shopping from?</h1>
+                        <p class="text-xs text-blue-100 font-medium max-w-xs mx-auto" data-i18n="landing_hero_sub">Choose the option that fits you best today. We'll guide your journey seamlessly.</p>
+                        
+                        <!-- Illustration Graphic Accent -->
+                        <div class="pt-2 flex justify-center space-x-4 opacity-85">
+                            <div class="bg-white/10 px-3 py-1.5 rounded-xl border border-white/10 text-[10px] font-bold">
+                                <i class="fa-solid fa-house text-walmart-yellow mr-1"></i> Home Check
+                            </div>
+                            <div class="bg-white/10 px-3 py-1.5 rounded-xl border border-white/10 text-[10px] font-bold">
+                                <i class="fa-solid fa-store text-walmart-yellow mr-1"></i> In-Store AR
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dual Journey Decision Cards -->
+                    <div class="space-y-3">
+                        
+                        <!-- JOURNEY A: START FROM HOME -->
+                        <div onclick="startHomeJourney()" class="bg-white rounded-3xl p-4 border-2 border-gray-100 shadow-sm hover:border-walmart-blue transition-all cursor-pointer group space-y-3">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-11 h-11 bg-blue-50 text-walmart-blue rounded-2xl flex items-center justify-center text-lg font-black shrink-0 group-hover:bg-walmart-blue group-hover:text-white transition-colors">
+                                    <i class="fa-solid fa-house-user"></i>
+                                </div>
+                                <div class="space-y-0.5 flex-1">
+                                    <span class="bg-blue-100 text-walmart-blue text-[9px] font-black uppercase px-2 py-0.5 rounded-full" data-i18n="journey_home_badge">Home Journey</span>
+                                    <h3 class="text-sm font-extrabold text-walmart-navy" data-i18n="journey_home_title">I'm at home</h3>
+                                    <p class="text-xs text-gray-500 leading-relaxed" data-i18n="journey_home_desc">Check stock nearby, compare stores, plan your list and get directions before leaving.</p>
+                                </div>
+                            </div>
+                            <button class="w-full bg-walmart-yellow hover:bg-walmart-yellowHover text-walmart-navy py-2.5 px-4 rounded-full font-black text-xs shadow-sm flex items-center justify-center space-x-2">
+                                <span data-i18n="btn_find_store">Find a store</span>
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </button>
+                        </div>
+
+                        <!-- JOURNEY B: START IN-STORE -->
+                        <div onclick="startInStoreJourney()" class="bg-white rounded-3xl p-4 border-2 border-gray-100 shadow-sm hover:border-walmart-blue transition-all cursor-pointer group space-y-3">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-11 h-11 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-lg font-black shrink-0 group-hover:bg-amber-500 group-hover:text-white transition-colors">
+                                    <i class="fa-solid fa-store"></i>
+                                </div>
+                                <div class="space-y-0.5 flex-1">
+                                    <span class="bg-amber-100 text-amber-800 text-[9px] font-black uppercase px-2 py-0.5 rounded-full" data-i18n="journey_store_badge">In-Store Journey</span>
+                                    <h3 class="text-sm font-extrabold text-walmart-navy" data-i18n="journey_store_title">I'm at the store now</h3>
+                                    <p class="text-xs text-gray-500 leading-relaxed" data-i18n="journey_store_desc">Choose your store or scan its QR code, then go straight to your list or aisle navigation.</p>
+                                </div>
+                            </div>
+                            <button class="w-full bg-walmart-yellow hover:bg-walmart-yellowHover text-walmart-navy py-2.5 px-4 rounded-full font-black text-xs shadow-sm flex items-center justify-center space-x-2">
+                                <span data-i18n="btn_start_instore">Start in-store shopping</span>
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="text-center text-[10px] text-gray-400 font-medium pb-2">
+                    <span data-i18n="demo_disclaimer">Demo experience • Stock, pricing & location data updated real-time</span>
+                </div>
+            </section>
+
+
+            <!-- ================================================================= -->
+            <!-- SCREEN 1: HOME JOURNEY - PRE-RIDE STORE & PRODUCT SEARCH         -->
+            <!-- ================================================================= -->
+            <section id="screen-home-search" class="p-4 space-y-3.5 flex-1 flex flex-col hidden">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <span class="bg-blue-100 text-walmart-blue text-[9px] font-black uppercase px-2.5 py-0.5 rounded-full" data-i18n="journey_home_badge">Home Journey</span>
+                        <h2 class="text-base font-black text-walmart-navy mt-1" data-i18n="home_search_title">Find your store & stock</h2>
+                    </div>
+                </div>
+
+                <!-- Search Input Field -->
+                <div class="relative">
+                    <input type="text" id="home-product-search" value="Apple Cider Vinegar 250ml" 
+                        onkeyup="renderHomeSearchResults()" 
+                        class="w-full pl-9 pr-24 py-2.5 bg-white border-2 border-walmart-blue rounded-2xl text-xs font-bold text-walmart-navy focus:outline-none shadow-sm"
+                        placeholder="Try milk, vinegar, or cleaner...">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-walmart-blue text-xs"></i>
+                    <button onclick="renderHomeSearchResults()" class="absolute right-1.5 top-1.5 bg-walmart-yellow text-walmart-navy font-black text-xs px-3 py-1.5 rounded-xl">
+                        <span data-i18n="btn_check">Check</span>
+                    </button>
+                </div>
+
+                <!-- Quick Category Tags -->
+                <div class="flex items-center space-x-1.5 overflow-x-auto no-scrollbar py-0.5 text-xs">
+                    <button onclick="filterHomeCategory('All')" id="hcat-All" class="hcat-btn bg-walmart-blue text-white px-3 py-1 rounded-full font-bold shrink-0">All (500+)</button>
+                    <button onclick="filterHomeCategory('Kitchen')" id="hcat-Kitchen" class="hcat-btn bg-white border border-gray-200 text-walmart-navy px-3 py-1 rounded-full font-bold shrink-0">🍳 Kitchen</button>
+                    <button onclick="filterHomeCategory('Bathroom')" id="hcat-Bathroom" class="hcat-btn bg-white border border-gray-200 text-walmart-navy px-3 py-1 rounded-full font-bold shrink-0">🧼 Bathroom</button>
+                    <button onclick="filterHomeCategory('Hall')" id="hcat-Hall" class="hcat-btn bg-white border border-gray-200 text-walmart-navy px-3 py-1 rounded-full font-bold shrink-0">🛋️ Hall</button>
+                    <button onclick="filterHomeCategory('Medical')" id="hcat-Medical" class="hcat-btn bg-white border border-gray-200 text-walmart-navy px-3 py-1 rounded-full font-bold shrink-0">💊 Medical</button>
+                    <button onclick="filterHomeCategory('Festival')" id="hcat-Festival" class="hcat-btn bg-amber-100 border border-amber-300 text-amber-900 px-3 py-1 rounded-full font-bold shrink-0">🪔 Festival</button>
+                </div>
+
+                <!-- Search & Stock Results Container -->
+                <div id="home-search-results" class="space-y-3 flex-1 overflow-y-auto custom-scroll pr-0.5">
+                    <!-- Dynamic rendering via JS -->
+                </div>
+            </section>
+
+
+            <!-- ================================================================= -->
+            <!-- SCREEN 2: IN-STORE JOURNEY - CHOOSE STORE / QR SCAN             -->
+            <!-- ================================================================= -->
+            <section id="screen-store-select" class="p-4 space-y-4 flex-1 flex flex-col justify-between hidden">
+                <div class="space-y-4">
+                    <div>
+                        <span class="bg-amber-100 text-amber-800 text-[9px] font-black uppercase px-2.5 py-0.5 rounded-full" data-i18n="journey_store_badge">In-Store Journey</span>
+                        <h2 class="text-base font-black text-walmart-navy mt-1" data-i18n="store_select_title">Choose your store</h2>
+                        <p class="text-xs text-gray-500" data-i18n="store_select_sub">Select your current store or scan the store entrance QR code.</p>
+                    </div>
+
+                    <!-- Store Dropdown Selector Card -->
+                    <div class="bg-white p-4 rounded-3xl border border-gray-200 shadow-sm space-y-3">
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider" data-i18n="label_nearby_stores">Nearest Supermarket</label>
+                        <select id="store-dropdown-select" onchange="updateSelectedStore(this.value)" class="w-full p-3 bg-gray-50 border border-gray-300 rounded-2xl text-xs font-extrabold text-walmart-navy focus:outline-none">
+                            <option value="Main Street Supercenter">Main Street Supercenter (0.8 km • Open till 10 PM)</option>
+                            <option value="City Fresh Market">City Fresh Market (1.4 km • Open till 11 PM)</option>
+                            <option value="Express Mart Chennai">Express Mart Chennai (2.1 km • Open till 10 PM)</option>
+                        </select>
+                    </div>
+
+                    <!-- QR Code Store Entry Option Card -->
+                    <div onclick="simulateQRStoreScan()" class="bg-blue-50/60 p-4 rounded-3xl border-2 border-dashed border-walmart-blue flex items-center justify-between cursor-pointer hover:bg-blue-100/50 transition-all">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-walmart-blue text-white rounded-2xl flex items-center justify-center text-lg font-black shrink-0 shadow-sm">
+                                <i class="fa-solid fa-qrcode"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-extrabold text-walmart-navy" data-i18n="scan_store_qr_title">Scan store QR code</h4>
+                                <p class="text-[10px] text-gray-500" data-i18n="scan_store_qr_sub">Identify your exact store location instantly</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-camera text-walmart-blue text-base"></i>
+                    </div>
+                </div>
+
+                <button onclick="confirmStoreSelection()" class="w-full bg-walmart-blue hover:bg-blue-800 text-white py-3 px-4 rounded-full font-black text-xs shadow-md transition-all">
+                    <span data-i18n="btn_confirm_store">Confirm store & continue</span>
+                </button>
+            </section>
+
+
+            <!-- ================================================================= -->
+            <!-- SCREEN 3: IN-STORE MODE SELECTOR (LIST vs BROWSE)                -->
+            <!-- ================================================================= -->
+            <section id="screen-store-mode" class="p-4 space-y-4 flex-1 flex flex-col justify-between hidden">
+                <div class="space-y-4">
+                    <!-- Confirmation Store Banner -->
+                    <div class="bg-green-50 p-3.5 rounded-2xl border border-green-200 flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-walmart-green text-white rounded-full flex items-center justify-center text-sm font-black shrink-0">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-bold text-walmart-green uppercase" data-i18n="store_selected_badge">Store Selected</span>
+                            <h4 id="mode-selected-store" class="text-xs font-black text-walmart-navy">Main Street Supercenter</h4>
+                        </div>
+                    </div>
+
+                    <h2 class="text-base font-black text-walmart-navy" data-i18n="mode_choice_title">Choose how you'd like to shop</h2>
+
+                    <!-- Mode A: Open Saved Shopping List -->
+                    <div onclick="openShoppingListMode()" class="bg-white p-4 rounded-3xl border-2 border-gray-100 shadow-sm hover:border-walmart-blue transition-all cursor-pointer flex items-center justify-between group">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-11 h-11 bg-blue-50 text-walmart-blue rounded-2xl flex items-center justify-center text-lg font-black shrink-0 group-hover:bg-walmart-blue group-hover:text-white transition-colors">
+                                <i class="fa-solid fa-rectangle-list"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-extrabold text-walmart-navy" data-i18n="mode_list_title">Open my shopping list</h4>
+                                <p class="text-[10px] text-gray-500" data-i18n="mode_list_sub">Your saved items auto-mapped to aisles</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-gray-400 group-hover:text-walmart-blue transition-colors text-xs"></i>
+                    </div>
+
+                    <!-- Mode B: Browse & Search Items -->
+                    <div onclick="openBrowseCatalogMode()" class="bg-white p-4 rounded-3xl border-2 border-gray-100 shadow-sm hover:border-walmart-blue transition-all cursor-pointer flex items-center justify-between group">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-11 h-11 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-lg font-black shrink-0 group-hover:bg-amber-500 group-hover:text-white transition-colors">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-extrabold text-walmart-navy" data-i18n="mode_browse_title">Browse and search items</h4>
+                                <p class="text-[10px] text-gray-500" data-i18n="mode_browse_sub">Find what you need on the go</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-gray-400 group-hover:text-amber-500 transition-colors text-xs"></i>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 p-3 rounded-2xl border border-blue-100 flex items-center space-x-2.5 text-xs text-walmart-blue">
+                    <i class="fa-solid fa-circle-info text-sm"></i>
+                    <span class="text-[11px] font-semibold" data-i18n="mode_tip">You can switch modes or change your store anytime from the menu.</span>
+                </div>
+            </section>
+
+
+            <!-- ================================================================= -->
+            <!-- SCREEN 4: SHOPPING LIST VIEW (WITH SPATIAL AISLE MAPPING)        -->
+            <!-- ================================================================= -->
+            <section id="screen-shopping-list" class="p-4 space-y-3.5 flex-1 flex flex-col hidden">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-base font-black text-walmart-navy" data-i18n="list_screen_title">Your Shopping List</h2>
+                        <p id="list-items-summary" class="text-xs text-gray-500 font-medium">3 items • Estimated ₹242</p>
+                    </div>
+                    <span class="bg-walmart-yellow text-walmart-navy text-xs font-black px-3 py-1 rounded-full shadow-sm" id="list-count-badge">
+                        3 Items
+                    </span>
+                </div>
+
+                <!-- Custom Add Bar -->
+                <div class="flex space-x-2">
+                    <input type="text" id="custom-list-input" placeholder="Add new item..." 
+                        class="flex-1 px-3.5 py-2 bg-white border border-gray-300 rounded-2xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-walmart-blue"
+                        onkeypress="if(event.key==='Enter') addCustomItemToList()">
+                    <button onclick="addCustomItemToList()" class="bg-walmart-blue hover:bg-blue-800 text-white px-4 py-2 rounded-2xl font-bold text-xs shadow-sm">
+                        <span data-i18n="btn_add">Add</span>
+                    </button>
+                </div>
+
+                <!-- Active List Items Container -->
+                <div id="shopping-list-container" class="space-y-2.5 flex-1 overflow-y-auto custom-scroll pr-0.5">
+                    <!-- Dynamic rendering via JS -->
+                </div>
+
+                <!-- Action Button: Start AR Aisle Navigation -->
+                <div class="pt-2 border-t border-gray-200">
+                    <button onclick="startARNavigation()" class="w-full bg-walmart-yellow hover:bg-walmart-yellowHover text-walmart-navy py-3 px-4 rounded-full font-black text-xs shadow-md transition-all flex items-center justify-center space-x-2">
+                        <span data-i18n="btn_start_aisle_nav">Start aisle navigation →</span>
+                    </button>
+                </div>
+            </section>
+
+
+            <!-- ================================================================= -->
+            <!-- SCREEN 5: BROWSE PRODUCTS CATALOG WITH VARIANT SELECTOR           -->
+            <!-- ================================================================= -->
+            <section id="screen-browse-catalog" class="p-4 space-y-3.5 flex-1 flex flex-col hidden">
+                <div>
+                    <h2 class="text-base font-black text-walmart-navy" data-i18n="browse_screen_title">Browse Products</h2>
+                    <p class="text-xs text-gray-500" data-i18n="browse_screen_sub">Find and add items to your list.</p>
+                </div>
+
+                <!-- Catalog Search Input -->
+                <div class="relative">
+                    <input type="text" id="catalog-search-input" onkeyup="renderBrowseCatalog()" placeholder="Search for products..." 
+                        class="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-300 rounded-2xl text-xs font-bold text-walmart-navy focus:outline-none shadow-sm">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-gray-400 text-xs"></i>
+                </div>
+
+                <!-- Department Category Chips -->
+                <div class="flex items-center space-x-1.5 overflow-x-auto no-scrollbar py-0.5 text-xs">
+                    <button onclick="filterBrowseCategory('All')" id="bcat-All" class="bcat-btn bg-walmart-blue text-white px-3 py-1 rounded-full font-bold shrink-0">All (500+)</button>
+                    <button onclick="filterBrowseCategory('Kitchen')" id="bcat-Kitchen" class="bcat-btn bg-white border border-gray-200 text-walmart-navy px-3 py-1 rounded-full font-bold shrink-0">🍳 Kitchen</button>
+                    <button onclick="filterBrowseCategory('Bathroom')" id="bcat-Bathroom" class="bcat-btn bg-white border border-gray-200 text-walmart-navy px-3 py-1 rounded-full font-bold shrink-0">🧼 Bathroom</button>
+                    <button onclick="filterBrowseCategory('Hall')" id="bcat-Hall" class="bcat-btn bg-white border border-gray-200 text-walmart-navy px-3 py-1 rounded-full font-bold shrink-0">🛋️ Hall</button>
+                    <button onclick="filterBrowseCategory('Medical')" id="bcat-Medical" class="bcat-btn bg-white border border-gray-200 text-walmart-navy px-3 py-1 rounded-full font-bold shrink-0">💊 Medical</button>
+                    <button onclick="filterBrowseCategory('Festival')" id="bcat-Festival" class="bcat-btn bg-amber-100 border border-amber-300 text-amber-900 px-3 py-1 rounded-full font-bold shrink-0">🪔 Festival</button>
+                </div>
+
+                <!-- Catalog Grid Container -->
+                <div id="browse-catalog-container" class="space-y-3 flex-1 overflow-y-auto custom-scroll pr-0.5">
+                    <!-- Dynamic rendering via JS -->
+                </div>
+            </section>
+
+
+            <!-- ================================================================= -->
+            <!-- SCREEN 6: SPATIAL AR CAMERA WAYFINDER                             -->
+            <!-- ================================================================= -->
+            <section id="screen-ar-camera" class="relative flex-1 flex flex-col hidden overflow-hidden bg-black">
+                
+                <!-- Simulated AR Camera Backdrop Canvas -->
+                <div class="absolute inset-0 bg-slate-900 z-0 overflow-hidden">
+                    <!-- Realistic Store Aisle Backdrop SVG -->
+                    <svg class="w-full h-full opacity-45 scale-105" viewBox="0 0 400 700" preserveAspectRatio="none">
+                        <line x1="0" y1="700" x2="160" y2="280" stroke="#64748B" stroke-width="2" />
+                        <line x1="400" y1="700" x2="240" y2="280" stroke="#64748B" stroke-width="2" />
+                        <polygon points="0,150 160,280 160,700 0,700" fill="#1E293B" />
+                        <polygon points="400,150 240,280 240,700 400,700" fill="#1E293B" />
+                        <polygon points="160,280 240,280 320,700 80,700" fill="#0F172A" />
+                        <!-- Aisle Shelf Lines -->
+                        <line x1="20" y1="350" x2="140" y2="390" stroke="#475569" stroke-width="2" />
+                        <line x1="380" y1="350" x2="260" y2="390" stroke="#475569" stroke-width="2" />
+                    </svg>
+
+                    <!-- Glowing Animated Spark Yellow Floor Pathway -->
+                    <div class="absolute inset-0 flex flex-col items-center justify-end pb-24 pointer-events-none">
+                        <svg class="w-full h-3/5 ar-animated-path" viewBox="0 0 300 400" fill="none">
+                            <defs>
+                                <linearGradient id="arGlowYellow" x1="0%" y1="100%" x2="0%" y2="0%">
+                                    <stop offset="0%" stop-color="#FFC220" stop-opacity="0.95" />
+                                    <stop offset="100%" stop-color="#FFC220" stop-opacity="0.25" />
+                                </linearGradient>
+                            </defs>
+                            <path d="M 85 400 L 138 200 L 162 200 L 215 400 Z" fill="url(#arGlowYellow)" />
+                            <path d="M 110 360 L 150 320 L 190 360" stroke="#041E42" stroke-width="6" stroke-linecap="round" fill="none" />
+                        </svg>
+                    </div>
+
+                    <!-- Spatial Floating Target Pin -->
+                    <div id="ar-target-pin" class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 ar-pin-float z-20 flex flex-col items-center cursor-pointer" onclick="markARItemCollected()">
+                        <div class="bg-walmart-navy text-white p-3 rounded-2xl border-2 border-walmart-yellow shadow-2xl flex items-center space-x-3 w-64">
+                            <div class="w-9 h-9 bg-walmart-yellow text-walmart-navy rounded-xl flex items-center justify-center font-black text-base shrink-0">
+                                <i id="ar-pin-icon" class="fa-solid fa-bottle-water"></i>
+                            </div>
+                            <div class="flex-1 overflow-hidden">
+                                <span id="ar-pin-badge" class="bg-walmart-blue text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider inline-block">
+                                    Aisle 2B • Bay 4 • Middle Shelf
+                                </span>
+                                <h4 id="ar-pin-name" class="text-xs font-extrabold text-white truncate mt-0.5">Apple Cider Vinegar</h4>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-walmart-yellow text-xs"></i>
+                        </div>
+                        <div class="w-1 h-8 bg-walmart-yellow shadow-lg"></div>
+                        <div class="w-4 h-4 bg-walmart-yellow rounded-full shadow-lg ring-4 ring-walmart-yellow/40"></div>
+                    </div>
+                </div>
+
+                <!-- Top Camera Navigation Overlay -->
+                <div class="relative z-20 p-3 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent">
+                    <button onclick="exitARCamera()" class="bg-black/60 text-white w-8 h-8 rounded-full flex items-center justify-center border border-white/20">
+                        <i class="fa-solid fa-xmark text-sm"></i>
+                    </button>
+                    <div class="bg-black/60 text-white px-3 py-1 rounded-full border border-white/20 text-[11px] font-bold flex items-center space-x-1.5">
+                        <span class="w-2 h-2 rounded-full bg-walmart-green animate-ping"></span>
+                        <span data-i18n="ar_camera_active">AR Wayfinder Active</span>
+                    </div>
+                    <button onclick="showToast('Flash Triggered', 'fa-bolt')" class="bg-black/60 text-white w-8 h-8 rounded-full flex items-center justify-center border border-white/20">
+                        <i class="fa-solid fa-bolt text-xs"></i>
+                    </button>
+                </div>
+
+                <!-- AR Direction Prompt Badge -->
+                <div class="relative z-20 mx-4 mt-2 bg-walmart-navy/90 backdrop-blur-md text-white p-3 rounded-2xl border border-white/20 flex items-center space-x-3 shadow-lg">
+                    <div class="w-8 h-8 bg-walmart-yellow text-walmart-navy rounded-full flex items-center justify-center text-sm font-black shrink-0">
+                        <i class="fa-solid fa-person-walking"></i>
+                    </div>
+                    <div>
+                        <h4 id="ar-step-prompt" class="text-xs font-extrabold text-white">Walk 8 meters forward. Look at left shelf.</h4>
+                        <p class="text-[10px] text-gray-300 font-medium">Follow the yellow floor path to your target item.</p>
+                    </div>
+                </div>
+
+                <!-- Bottom Next Item Overlay Card -->
+                <div class="mt-auto relative z-20 p-4 space-y-3 bg-gradient-to-t from-walmart-navy via-walmart-navy/95 to-transparent pt-6">
+                    <div class="bg-white rounded-2xl p-3 shadow-xl border border-gray-100 flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-9 h-9 bg-blue-50 text-walmart-blue rounded-xl flex items-center justify-center text-sm font-bold shrink-0">
+                                <i id="ar-next-icon" class="fa-solid fa-bottle-water"></i>
+                            </div>
+                            <div>
+                                <span class="text-[9px] font-bold text-gray-400 uppercase" data-i18n="ar_next_item_label">Next Item Target</span>
+                                <h4 id="ar-next-name" class="text-xs font-extrabold text-walmart-navy">Milk 1L</h4>
+                            </div>
+                        </div>
+                        <button onclick="markARItemCollected()" class="bg-walmart-yellow hover:bg-walmart-yellowHover text-walmart-navy font-black text-xs px-4 py-2 rounded-full shadow-sm">
+                            <span data-i18n="btn_collected">Collected! →</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ================================================================= -->
+            <!-- SCREEN 7: SCAN & PAY + EXPRESS EXIT QR PASS                       -->
+            <!-- ================================================================= -->
+            <section id="screen-scan-pay" class="p-4 space-y-4 flex-1 flex flex-col justify-between hidden">
+                <div class="space-y-4">
+                    <div>
+                        <h2 class="text-base font-black text-walmart-navy" data-i18n="scan_pay_title">Scan & Pay</h2>
+                        <p class="text-xs text-gray-500" data-i18n="scan_pay_sub">Skip the queue. Scan items, pay via UPI and get your express exit pass.</p>
+                    </div>
+
+                    <!-- Simulated Scanner Camera Viewfinder -->
+                    <div onclick="simulateBarcodeScan()" class="relative h-44 bg-slate-900 rounded-3xl overflow-hidden border-2 border-walmart-blue flex flex-col justify-between p-3 cursor-pointer group">
+                        <div class="absolute inset-0 flex items-center justify-center opacity-30">
+                            <div class="w-32 h-32 border-2 border-dashed border-walmart-yellow rounded-2xl"></div>
+                        </div>
+
+                        <!-- Animated Laser Scanner Line -->
+                        <div class="absolute inset-x-0 top-1/2 h-0.5 bg-walmart-yellow shadow-[0_0_12px_#FFC220] animate-pulse"></div>
+
+                        <div class="relative z-10 flex justify-between items-center text-white">
+                            <span class="bg-black/60 px-2.5 py-1 rounded-full text-[10px] font-bold border border-white/20">
+                                <i class="fa-solid fa-barcode mr-1"></i> Barcode Scanner
+                            </span>
+                            <span class="bg-walmart-green text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase" data-i18n="status_ready">Ready</span>
+                        </div>
+
+                        <div class="relative z-10 text-center text-xs text-white font-bold bg-black/60 py-1.5 rounded-xl border border-white/10">
+                            <span data-i18n="tap_to_scan_prompt">Tap camera view to scan shelf barcode</span>
+                        </div>
+                    </div>
+
+                    <!-- Cart Summary Card -->
+                    <div class="bg-white p-4 rounded-3xl border border-gray-200 shadow-sm space-y-2.5">
+                        <div class="flex justify-between items-center border-b border-gray-100 pb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                            <span data-i18n="cart_summary_label">Cart Summary</span>
+                            <span id="scan-cart-count" class="text-walmart-blue font-extrabold">3 items</span>
+                        </div>
+
+                        <div id="scan-cart-items-list" class="space-y-2 text-xs">
+                            <!-- Dynamic Cart Items -->
+                        </div>
+
+                        <div class="pt-2 border-t border-gray-200 flex justify-between items-center">
+                            <span class="text-xs font-bold text-gray-600" data-i18n="label_total">Total Amount:</span>
+                            <span id="scan-cart-total-price" class="text-base font-black text-walmart-navy">₹285.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <button onclick="processUPIPayment()" class="w-full bg-walmart-yellow hover:bg-walmart-yellowHover text-walmart-navy py-3 px-4 rounded-full font-black text-xs shadow-md transition-all flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-bolt text-sm"></i>
+                        <span data-i18n="btn_pay_upi">Pay via UPI</span>
+                    </button>
+                    <p class="text-[10px] text-center text-gray-400 font-medium">🔒 Secure • Fast • No billing queue</p>
+                </div>
+            </section>
+
+
+            <!-- ================================================================= -->
+            <!-- SCREEN 8: DIGITAL EXIT QR PASS SUCCESS SCREEN                     -->
+            <!-- ================================================================= -->
+            <section id="screen-payment-success" class="p-4 space-y-4 flex-1 flex flex-col justify-between hidden">
+                <div class="space-y-4 text-center">
+                    <div class="w-14 h-14 bg-green-100 text-walmart-green rounded-full flex items-center justify-center text-2xl font-black mx-auto shadow-sm">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+
+                    <div>
+                        <span class="bg-walmart-green text-white text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase" data-i18n="badge_paid">Payment Successful!</span>
+                        <h2 class="text-lg font-black text-walmart-navy mt-1.5" id="success-total-paid">₹285.00 paid via UPI</h2>
+                        <p class="text-xs text-gray-500 font-medium">Order #CKB123456 • Verified Online</p>
+                    </div>
+
+                    <!-- Digital QR Exit Pass Container -->
+                    <div class="bg-white p-5 rounded-3xl border-2 border-walmart-green shadow-md space-y-3 inline-block w-full">
+                        <h3 class="text-xs font-extrabold text-walmart-navy" data-i18n="exit_pass_title">Digital QR Exit Pass</h3>
+                        <p class="text-[10px] text-gray-500" data-i18n="exit_pass_sub">Show this at the exit for express verification.</p>
+
+                        <div class="p-3 bg-gray-50 rounded-2xl inline-block border border-gray-200">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=CARTKB-EXPRESS-PAID-285" 
+                                 alt="Digital Exit QR Code" 
+                                 class="w-36 h-36 mx-auto">
+                        </div>
+
+                        <div class="bg-green-50 text-walmart-green text-[10px] font-extrabold py-1 px-3 rounded-full inline-block">
+                            <i class="fa-solid fa-clock mr-1"></i> Valid for 10 minutes
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="resetAppToHome()" class="w-full bg-walmart-yellow hover:bg-walmart-yellowHover text-walmart-navy py-3 px-4 rounded-full font-black text-xs shadow-md">
+                    <span data-i18n="btn_view_order">Done & Return Home</span>
+                </button>
+            </section>
+
+        </main>
+
+        <!-- ================================================================= -->
+        <!-- FIXED BOTTOM TAB BAR                                              -->
+        <!-- ================================================================= -->
+        <footer id="app-bottom-nav" class="bg-white border-t border-gray-200 px-3 py-2 flex justify-around items-center z-40 shrink-0">
+            <button onclick="navTabClick('home')" id="nav-home" class="nav-btn text-walmart-blue flex flex-col items-center space-y-0.5">
+                <i class="fa-solid fa-house text-base"></i>
+                <span class="text-[10px] font-bold" data-i18n="nav_home">Home</span>
+            </button>
+            <button onclick="navTabClick('list')" id="nav-list" class="nav-btn text-gray-400 flex flex-col items-center space-y-0.5">
+                <i class="fa-solid fa-list-check text-base"></i>
+                <span class="text-[10px] font-bold" data-i18n="nav_list">List</span>
+            </button>
+            <button onclick="navTabClick('scan')" id="nav-scan" class="nav-btn text-gray-400 flex flex-col items-center space-y-0.5">
+                <i class="fa-solid fa-qrcode text-base"></i>
+                <span class="text-[10px] font-bold" data-i18n="nav_scan">Scan</span>
+            </button>
+            <button onclick="openLanguageModal()" id="nav-more" class="nav-btn text-gray-400 flex flex-col items-center space-y-0.5">
+                <i class="fa-solid fa-bars text-base"></i>
+                <span class="text-[10px] font-bold" data-i18n="nav_more">More</span>
+            </button>
+        </footer>
+
+        <!-- ================================================================= -->
+        <!-- MULTI-LANGUAGE SELECTION MODAL                                    -->
+        <!-- ================================================================= -->
+        <div id="language-modal" class="absolute inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+            <div class="bg-white w-full rounded-t-3xl sm:rounded-3xl p-5 space-y-4 shadow-2xl border border-gray-100 max-w-sm">
+                <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+                    <h3 class="text-sm font-black text-walmart-navy">Select Language</h3>
+                    <button onclick="closeLanguageModal()" class="w-7 h-7 bg-gray-100 text-gray-500 rounded-full flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="space-y-2">
+                    <button onclick="setLanguage('en')" id="lang-btn-en" class="w-full p-3 bg-blue-50 border-2 border-walmart-blue rounded-2xl flex items-center justify-between text-xs font-black text-walmart-navy">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-7 h-7 bg-walmart-blue text-white rounded-full flex items-center justify-center font-bold text-[10px]">EN</span>
+                            <span>English</span>
+                        </div>
+                        <i class="fa-solid fa-check text-walmart-blue text-sm"></i>
+                    </button>
+
+                    <button onclick="setLanguage('ta')" id="lang-btn-ta" class="w-full p-3 bg-gray-50 border-2 border-transparent rounded-2xl flex items-center justify-between text-xs font-bold text-walmart-navy hover:bg-gray-100">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-7 h-7 bg-amber-500 text-white rounded-full flex items-center justify-center font-bold text-[10px]">TA</span>
+                            <span>தமிழ் (Tamil)</span>
+                        </div>
+                        <i class="fa-solid fa-check text-walmart-blue text-sm hidden"></i>
+                    </button>
+
+                    <button onclick="setLanguage('hi')" id="lang-btn-hi" class="w-full p-3 bg-gray-50 border-2 border-transparent rounded-2xl flex items-center justify-between text-xs font-bold text-walmart-navy hover:bg-gray-100">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-7 h-7 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-[10px]">HI</span>
+                            <span>हिंदी (Hindi)</span>
+                        </div>
+                        <i class="fa-solid fa-check text-walmart-blue text-sm hidden"></i>
+                    </button>
+                </div>
+
+                <div class="pt-2 text-center text-[10px] text-gray-400 font-medium border-t border-gray-100">
+                    CartKB supports multiple languages to make shopping easier for everyone.
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification Box -->
+        <div id="toast-box" class="absolute top-14 left-1/2 -translate-x-1/2 bg-walmart-navy text-white text-xs font-bold px-4 py-2 rounded-full shadow-2xl z-50 flex items-center space-x-2 border border-walmart-yellow opacity-0 transition-all duration-300 pointer-events-none">
+            <i id="toast-icon" class="fa-solid fa-circle-info text-walmart-yellow"></i>
+            <span id="toast-msg">Notification</span>
+        </div>
+
     </div>
-  </header>
 
-  <!-- MAIN CONTAINER -->
-  <main class="max-w-md mx-auto w-full flex-1 p-4 space-y-4 pb-20">
+    <!-- Application State & Interactive Controller Script -->
+    <script>
+        // Multi-Language Dictionary
+        const i18n = {
+            en: {
+                landing_hero_title: "Where are you shopping from?",
+                landing_hero_sub: "Choose the option that fits you best today. We'll guide your journey seamlessly.",
+                journey_home_badge: "Home Journey",
+                journey_home_title: "I'm at home",
+                journey_home_desc: "Check stock nearby, compare stores, plan your list and get directions before leaving.",
+                btn_find_store: "Find a store",
+                journey_store_badge: "In-Store Journey",
+                journey_store_title: "I'm at the store now",
+                journey_store_desc: "Choose your store or scan its QR code, then go straight to your list or aisle navigation.",
+                btn_start_instore: "Start in-store shopping",
+                demo_disclaimer: "Demo experience • Stock, pricing & location data updated real-time",
+                home_search_title: "Find your store & stock",
+                btn_check: "Check",
+                store_select_title: "Choose your store",
+                store_select_sub: "Select your current store or scan the store entrance QR code.",
+                label_nearby_stores: "Nearest Supermarket",
+                scan_store_qr_title: "Scan store QR code",
+                scan_store_qr_sub: "Identify your exact store location instantly",
+                btn_confirm_store: "Confirm store & continue",
+                store_selected_badge: "Store Selected",
+                mode_choice_title: "Choose how you'd like to shop",
+                mode_list_title: "Open my shopping list",
+                mode_list_sub: "Your saved items auto-mapped to aisles",
+                mode_browse_title: "Browse and search items",
+                mode_browse_sub: "Find what you need on the go",
+                mode_tip: "You can switch modes or change your store anytime from the menu.",
+                list_screen_title: "Your Shopping List",
+                btn_add: "Add",
+                btn_start_aisle_nav: "Start aisle navigation →",
+                browse_screen_title: "Browse Products",
+                browse_screen_sub: "Find and add items to your list.",
+                ar_camera_active: "AR Wayfinder Active",
+                ar_next_item_label: "Next Item Target",
+                btn_collected: "Collected! →",
+                scan_pay_title: "Scan & Pay",
+                scan_pay_sub: "Skip the queue. Scan items, pay via UPI and get your express exit pass.",
+                status_ready: "Ready",
+                tap_to_scan_prompt: "Tap camera view to scan shelf barcode",
+                cart_summary_label: "Cart Summary",
+                label_total: "Total Amount:",
+                btn_pay_upi: "Pay via UPI",
+                badge_paid: "Payment Successful!",
+                exit_pass_title: "Digital QR Exit Pass",
+                exit_pass_sub: "Show this at the exit for express verification.",
+                btn_view_order: "Done & Return Home",
+                nav_home: "Home",
+                nav_list: "List",
+                nav_scan: "Scan",
+                nav_more: "More",
+                badge_in_stock: "In Stock"
+            },
+            ta: {
+                landing_hero_title: "நீங்கள் எங்கிருந்து வாங்குகிறீர்கள்?",
+                landing_hero_sub: "உங்களுக்கு ஏற்ற விருப்பத்தை தேர்வு செய்யவும்.",
+                journey_home_badge: "வீட்டில் இருந்து",
+                journey_home_title: "நான் வீட்டில் இருக்கிறேன்",
+                journey_home_desc: "பொருள் இருப்பை சரிபார்க்கவும், வழிகளை அறியவும்.",
+                btn_find_store: "கடையைக் கண்டுபிடி",
+                journey_store_badge: "கடையில் இருந்து",
+                journey_store_title: "நான் கடையில் இருக்கிறேன்",
+                journey_store_desc: "கடையை தேர்வு செய்து நேரடியாக பொருளை தேடவும்.",
+                btn_start_instore: "ஷாப்பிங் தொடங்கவும்",
+                demo_disclaimer: "டெமோ அனுபவம் • நேரலை தகவல்",
+                home_search_title: "கடை மற்றும் பொருள் இருப்பு",
+                btn_check: "தேடு",
+                store_select_title: "கடையை தேர்வு செய்க",
+                store_select_sub: "உங்கள் கடையை தேர்வு செய்யவும் அல்லது QR ஸ்கேன் செய்யவும்.",
+                label_nearby_stores: "அருகிலுள்ள சூப்பர் மார்க்கெட்",
+                scan_store_qr_title: "கடை QR ஸ்கேன் செய்",
+                scan_store_qr_sub: "உங்கள் கடையை உடனடியாக கண்டறியவும்",
+                btn_confirm_store: "உறுதி செய்து தொடரவும்",
+                store_selected_badge: "கடை தேர்வு செய்யப்பட்டது",
+                mode_choice_title: "வழியை தேர்வு செய்யவும்",
+                mode_list_title: "எனது பட்டியலைத் திறக்கவும்",
+                mode_list_sub: "பொருட்கள் வரிசையாக வழிகாட்டப்படும்",
+                mode_browse_title: "பொருட்களைத் தேடுங்கள்",
+                mode_browse_sub: "தேவையானதை எளிதில் கண்டறியவும்",
+                mode_tip: "நீங்கள் எப்போது வேண்டுமானாலும் கடையை மாற்றலாம்.",
+                list_screen_title: "உங்கள் ஷாப்பிங் பட்டியல்",
+                btn_add: "சேர்",
+                btn_start_aisle_nav: "கேமரா வழிகாட்டியைத் தொடங்கு →",
+                browse_screen_title: "பொருட்கள் பட்டியல்",
+                browse_screen_sub: "பொருட்களை பட்டியலில் சேர்க்கவும்.",
+                ar_camera_active: "AR வழிகாட்டி இயங்குகிறது",
+                ar_next_item_label: "அடுத்த பொருள் இலக்கு",
+                btn_collected: "சேகரிக்கப்பட்டது! →",
+                scan_pay_title: "ஸ்கேன் & பே",
+                scan_pay_sub: "வரிசையில் நிற்காமல் UPI மூலம் கட்டணம் செலுத்துங்கள்.",
+                status_ready: "தயார்",
+                tap_to_scan_prompt: "பார் கோடு ஸ்கேன் செய்ய தட்டவும்",
+                cart_summary_label: "கூடை விபரம்",
+                label_total: "மொத்த தொகை:",
+                btn_pay_upi: "UPI மூலம் செலுத்துங்கள்",
+                badge_paid: "கட்டணம் செலுத்தப்பட்டது!",
+                exit_pass_title: "வெளியேற QR பாஸ்",
+                exit_pass_sub: "சரிபார்ப்பிற்காக வெளியேறும் இடத்தில் காட்டவும்.",
+                btn_view_order: "முடிந்தது",
+                nav_home: "முகப்பு",
+                nav_list: "பட்டியல்",
+                nav_scan: "ஸ்கேன்",
+                nav_more: "மேலும்",
+                badge_in_stock: "இருப்பில் உள்ளது"
+            },
+            hi: {
+                landing_hero_title: "आप कहां से खरीदारी कर रहे हैं?",
+                landing_hero_sub: "अपने हिसाब से सही विकल्प चुनें।",
+                journey_home_badge: "घर से खरीदारी",
+                journey_home_title: "मैं घर पर हूं",
+                journey_home_desc: "स्टॉक और नजदीकी स्टोर की जांच करें।",
+                btn_find_store: "स्टोर खोजें",
+                journey_store_badge: "स्टोर में खरीदारी",
+                journey_store_title: "मैं स्टोर में हूं",
+                journey_store_desc: "स्टोर चुनें या QR स्कैन करें।",
+                btn_start_instore: "खरीदारी शुरू करें",
+                demo_disclaimer: "डेमो अनुभव • रियल-टाइम डेटा",
+                home_search_title: "स्टोर और सामान का स्टॉक",
+                btn_check: "जांचें",
+                store_select_title: "अपना स्टोर चुनें",
+                store_select_sub: "स्टोर चुनें या QR कोड स्कैन करें।",
+                label_nearby_stores: "निकटतम सुपरमार्केट",
+                scan_store_qr_title: "स्टोर QR कोड स्कैन करें",
+                scan_store_qr_sub: "तुरंत अपना स्टोर पहचानें",
+                btn_confirm_store: "स्टोर की पुष्टि करें",
+                store_selected_badge: "स्टोर चुना गया",
+                mode_choice_title: "खरीदारी का तरीका चुनें",
+                mode_list_title: "मेरी खरीदारी सूची खोलें",
+                mode_list_sub: "सामान के हिसाब से रास्ता देखें",
+                mode_browse_title: "सामान खोजें",
+                mode_browse_sub: "जो चाहिए आसानी से पाएं",
+                mode_tip: "आप कभी भी स्टोर बदल सकते हैं।",
+                list_screen_title: "आपकी खरीदारी सूची",
+                btn_add: "जोड़ें",
+                btn_start_aisle_nav: "कैमरा नेविगेशन शुरू करें →",
+                browse_screen_title: "उत्पाद सूची",
+                browse_screen_sub: "सामान सूची में जोड़ें।",
+                ar_camera_active: "AR नेविगेटर चालू है",
+                ar_next_item_label: "अगला सामान लक्ष्य",
+                btn_collected: "मिल गया! →",
+                scan_pay_title: "स्कैन और भुगतान",
+                scan_pay_sub: "बिना लाइन के UPI से भुगतान करें।",
+                status_ready: "तैयार",
+                tap_to_scan_prompt: "बारकोड स्कैन करने के लिए टैप करें",
+                cart_summary_label: "कार्ट विवरण",
+                label_total: "कुल राशि:",
+                btn_pay_upi: "UPI से भुगतान करें",
+                badge_paid: "भुगतान सफल!",
+                exit_pass_title: "डिजिटल QR पास",
+                exit_pass_sub: "एग्जिट गेट पर दिखाएं।",
+                btn_view_order: "हो गया",
+                nav_home: "होम",
+                nav_list: "सूची",
+                nav_scan: "स्कैन",
+                nav_more: "अधिक",
+                badge_in_stock: "उपलब्ध है"
+            }
+        };
 
-    <!-- FESTIVAL OFFER BANNER -->
-    <section class="bg-gradient-to-r from-[#FFC220] to-amber-300 rounded-xl p-3.5 shadow-sm border border-amber-400 flex items-center justify-between">
-      <div class="space-y-0.5">
-        <span class="bg-[#041E42] text-[#FFC220] text-[9px] font-black uppercase px-2 py-0.5 rounded-full" id="festTag">Festival Offer</span>
-        <h3 class="text-sm font-extrabold text-[#041E42]" id="festTitle">Diwali & Pongal Super Savings</h3>
-        <p class="text-[11px] text-gray-800 font-medium" id="festDesc">Up to 40% OFF on Sweets, Puja Essentials & Kitchenware</p>
-      </div>
-      <button class="bg-[#0071DC] text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-md">Claim</button>
-    </section>
+        // 500+ Items Master Database with Multi-Variant Quantities
+        const catalogMasterDB = [
+            { id: 'p1', name: 'Apple Cider Vinegar', dept: 'Kitchen', aisle: 'Aisle 2B', bay: 'Bay 4', shelf: 'Middle Shelf', icon: 'fa-wine-bottle', variants: [{ label: '250ml', price: 145 }, { label: '500ml', price: 270 }, { label: '1L', price: 490 }] },
+            { id: 'p2', name: 'Fresh Toned Milk', dept: 'Kitchen', aisle: 'Aisle 1A', bay: 'Bay 3', shelf: 'Middle Shelf', icon: 'fa-bottle-water', variants: [{ label: '250ml', price: 18 }, { label: '500ml (1/2L)', price: 32 }, { label: '1L', price: 60 }, { label: '2L', price: 115 }] },
+            { id: 'p3', name: 'Kadalai Mittai 100g', dept: 'Snacks', aisle: 'Aisle 3C', bay: 'Bay 2', shelf: 'Middle Shelf', icon: 'fa-box', variants: [{ label: '100g Pack', price: 25 }, { label: '250g Pack', price: 60 }] },
+            { id: 'p4', name: 'Sunflower Cooking Oil', dept: 'Kitchen', aisle: 'Aisle 2A', bay: 'Bay 1', shelf: 'Lower Shelf', icon: 'fa-jug-detergent', variants: [{ label: '500ml Pouch', price: 95 }, { label: '1L Pouch', price: 180 }, { label: '5L Can', price: 850 }] },
+            { id: 'p5', name: 'Whole Wheat Atta Flour', dept: 'Kitchen', aisle: 'Aisle 1B', bay: 'Bay 2', shelf: 'Lower Shelf', icon: 'fa-wheat-awn', variants: [{ label: '1kg Pack', price: 55 }, { label: '5kg Bag', price: 240 }, { label: '10kg Bag', price: 450 }] },
+            { id: 'p6', name: 'Bathroom Cleaner Liquid', dept: 'Bathroom', aisle: 'Aisle 4A', bay: 'Bay 3', shelf: 'Lower Shelf', icon: 'fa-spray-can-sparkles', variants: [{ label: '250ml', price: 60 }, { label: '500ml', price: 110 }, { label: '1L Refill', price: 195 }] },
+            { id: 'p7', name: 'Paracetamol Tablets', dept: 'Medical', aisle: 'Aisle 5A', bay: 'Bay 1', shelf: 'Top Shelf', icon: 'fa-pills', variants: [{ label: '500mg Strip', price: 30 }, { label: '650mg Strip', price: 45 }] },
+            { id: 'p8', name: 'Diwali Festive Sweets Box', dept: 'Festival', aisle: 'Aisle 1B', bay: 'Bay 1', shelf: 'Special Bay', icon: 'fa-gift', variants: [{ label: '250g Box', price: 150 }, { label: '500g Box', price: 280 }, { label: '1kg Premium', price: 520 }] }
+        ];
 
-    <!-- STEP 1: PRE-RIDE LIVE STOCK & VARIANT SELECTOR -->
-    <section class="bg-white rounded-xl p-4 shadow-sm border border-gray-200 space-y-3">
-      <div class="flex justify-between items-center">
-        <span class="text-xs font-bold text-[#0071DC] uppercase tracking-wider" id="step1Tag">Step 1 • Check Stock Before Bike Ride</span>
-        <span class="bg-[#2A8703] text-white text-[10px] px-2 py-0.5 rounded-full font-bold">Chennai</span>
-      </div>
+        // Global App State
+        let currentLang = 'en';
+        let currentActiveStore = 'Main Street Supercenter';
+        let userShoppingList = [
+            { id: 'l1', name: 'Milk 1L', variant: '1L', aisle: 'Aisle 1A', bay: 'Bay 3', shelf: 'Middle Shelf', price: 32, icon: 'fa-bottle-water', collected: false },
+            { id: 'l2', name: 'Apple Cider Vinegar 250ml', variant: '250ml', aisle: 'Aisle 2B', bay: 'Bay 4', shelf: 'Middle Shelf', price: 145, icon: 'fa-wine-bottle', collected: false },
+            { id: 'l3', name: 'Kadalai Mittai 100g', variant: '100g Pack', aisle: 'Aisle 3C', bay: 'Bay 2', shelf: 'Middle Shelf', price: 25, icon: 'fa-box', collected: false }
+        ];
+        let activeARIndex = 0;
+        let selectedHomeCategory = 'All';
+        let selectedBrowseCategory = 'All';
 
-      <div class="relative">
-        <input type="text" id="searchInput" value="Milk" class="w-full pl-3 pr-10 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0071DC] font-medium" placeholder="Search 500+ items...">
-        <button class="absolute right-2 top-2 bg-[#0071DC] text-white p-1 rounded-md text-xs font-bold">🔍</button>
-      </div>
+        // Initialize App
+        window.addEventListener('load', () => {
+            renderHomeSearchResults();
+            renderShoppingList();
+            renderBrowseCatalog();
+            renderScanCartSummary();
+        });
 
-      <!-- Categories -->
-      <div class="flex space-x-2 overflow-x-auto no-scrollbar py-1 text-xs">
-        <button class="px-3 py-1 bg-[#0071DC] text-white font-bold rounded-full whitespace-nowrap">All (500+)</button>
-        <button class="px-3 py-1 bg-gray-100 text-[#041E42] font-bold rounded-full whitespace-nowrap">🍳 Kitchen</button>
-        <button class="px-3 py-1 bg-gray-100 text-[#041E42] font-bold rounded-full whitespace-nowrap">🧼 Bathroom</button>
-        <button class="px-3 py-1 bg-gray-100 text-[#041E42] font-bold rounded-full whitespace-nowrap">🛋️ Hall</button>
-        <button class="px-3 py-1 bg-gray-100 text-[#041E42] font-bold rounded-full whitespace-nowrap">💊 Medical</button>
-      </div>
+        // Navigation Controller
+        function showScreen(screenId, hideBottomNav = false) {
+            const screens = [
+                'screen-landing', 'screen-home-search', 'screen-store-select', 
+                'screen-store-mode', 'screen-shopping-list', 'screen-browse-catalog', 
+                'screen-ar-camera', 'screen-scan-pay', 'screen-payment-success'
+            ];
 
-      <!-- Product Variant Result -->
-      <div class="p-3 bg-blue-50/40 border border-blue-200 rounded-lg space-y-2">
-        <div class="flex justify-between items-start">
-          <div>
-            <span class="font-bold text-sm text-[#041E42]">Fresh Toned Milk</span>
-            <span class="bg-[#2A8703] text-white text-[9px] px-1.5 py-0.5 rounded font-bold ml-2">In Stock</span>
-            <p class="text-xs text-gray-500">Dairy • Main Street Supercenter (0.8 km)</p>
-          </div>
-          <span class="text-xs font-black text-[#0071DC]">Aisle 1A • Bay 2</span>
-        </div>
+            screens.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
 
-        <div class="flex items-center justify-between pt-1 border-t border-blue-100">
-          <span class="text-xs font-bold text-gray-600">Size:</span>
-          <div class="flex space-x-1.5">
-            <button onclick="addVariant('Milk 250ml', '₹18', 'Aisle 1A')" class="px-2 py-1 bg-white border border-gray-300 rounded text-xs font-bold">250ml (₹18)</button>
-            <button onclick="addVariant('Milk 1/2L (500ml)', '₹32', 'Aisle 1A')" class="px-2 py-1 bg-[#FFC220] border border-amber-400 rounded text-xs font-bold text-[#041E42]">1/2L (₹32)</button>
-            <button onclick="addVariant('Milk 1L', '₹60', 'Aisle 1A')" class="px-2 py-1 bg-white border border-gray-300 rounded text-xs font-bold">1L (₹60)</button>
-          </div>
-        </div>
-      </div>
-    </section>
+            const activeEl = document.getElementById(screenId);
+            if (activeEl) activeEl.classList.remove('hidden');
 
-    <!-- STEP 2: ACTIVE SHOPPING LIST -->
-    <section class="bg-white rounded-xl p-4 shadow-sm border border-gray-200 space-y-3">
-      <div class="flex justify-between items-center">
-        <span class="text-xs font-bold text-[#0071DC] uppercase tracking-wider" id="step2Tag">Step 2 • Active Shopping List</span>
-        <span class="text-xs text-gray-500 font-bold">Auto-Mapped to Aisles</span>
-      </div>
+            const headerBackBtn = document.getElementById('header-back-btn');
+            if (screenId === 'screen-landing') {
+                headerBackBtn.classList.add('hidden');
+            } else {
+                headerBackBtn.classList.remove('hidden');
+            }
 
-      <div id="activeCartList" class="space-y-2">
-        <div class="flex justify-between items-center p-2.5 bg-gray-50 rounded-lg border border-gray-200 text-xs font-medium">
-          <div>
-            <p class="font-bold text-[#041E42]">🥛 Milk 1/2L (500ml)</p>
-            <p class="text-[10px] text-gray-500">Dairy Section</p>
-          </div>
-          <span class="bg-blue-100 text-[#0071DC] px-2 py-1 rounded-full font-bold">Aisle 1A • Bay 2</span>
-        </div>
-        <div class="flex justify-between items-center p-2.5 bg-gray-50 rounded-lg border border-gray-200 text-xs font-medium">
-          <div>
-            <p class="font-bold text-[#041E42]">🍎 Apple Cider Vinegar 250ml</p>
-            <p class="text-[10px] text-gray-500">Kitchen & Grocery</p>
-          </div>
-          <span class="bg-blue-100 text-[#0071DC] px-2 py-1 rounded-full font-bold">Aisle 2B • Bay 4</span>
-        </div>
-      </div>
-    </section>
+            const bottomNav = document.getElementById('app-bottom-nav');
+            if (hideBottomNav || screenId === 'screen-ar-camera') {
+                bottomNav.classList.add('hidden');
+            } else {
+                bottomNav.classList.remove('hidden');
+            }
 
-    <!-- STEP 3: AR CAMERA WAYFINDER -->
-    <section class="bg-[#041E42] text-white rounded-xl p-4 shadow-md space-y-3">
-      <div class="flex justify-between items-center">
-        <span class="text-xs font-bold text-[#FFC220] uppercase tracking-wider" id="step3Tag">Step 3 • In-Store Navigation</span>
-        <span class="bg-[#2A8703] text-white text-[10px] px-2 py-0.5 rounded-full font-bold">AR Ready</span>
-      </div>
+            const ribbon = document.getElementById('store-context-ribbon');
+            if (['screen-landing', 'screen-store-select'].includes(screenId)) {
+                ribbon.classList.add('hidden');
+            } else {
+                ribbon.classList.remove('hidden');
+            }
 
-      <p class="text-xs font-medium text-gray-200">Current Target: <strong class="text-[#FFC220]">Apple Cider Vinegar 250ml</strong></p>
+            document.getElementById('main-viewport').scrollTop = 0;
+        }
 
-      <div id="arViewfinder" class="relative h-48 bg-gray-900 rounded-lg overflow-hidden border-2 border-[#FFC220] flex flex-col justify-between p-3">
-        <div class="absolute inset-0 opacity-25 bg-[radial-gradient(#FFC220_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        function handleHeaderBack() {
+            showScreen('screen-landing');
+        }
 
-        <div class="relative z-10 self-center bg-white/95 text-[#041E42] px-3 py-1.5 rounded-lg shadow-lg text-center border border-[#FFC220]">
-          <p class="text-[9px] font-bold text-[#0071DC] uppercase">In-Store Target</p>
-          <p class="text-xs font-black">Aisle 2B • Bay 4 • Shelf 3</p>
-        </div>
+        function navTabClick(tabKey) {
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-walmart-blue');
+                btn.classList.add('text-gray-400');
+            });
 
-        <div class="relative z-0 h-20 w-full flex justify-center items-end">
-          <div class="w-16 h-full bg-gradient-to-t from-[#FFC220] to-transparent opacity-85 rounded-t-full ar-path-glow border-x-2 border-yellow-200"></div>
-        </div>
+            const activeBtn = document.getElementById(`nav-${tabKey}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-gray-400');
+                activeBtn.classList.add('text-walmart-blue');
+            }
 
-        <div class="relative z-10 bg-black/80 backdrop-blur-sm p-1.5 rounded-lg text-center text-[11px] text-yellow-300 font-bold border border-yellow-500/30">
-          🚶 Walk 6 meters forward • Look at left shelf
-        </div>
-      </div>
+            if (tabKey === 'home') showScreen('screen-landing');
+            else if (tabKey === 'list') showScreen('screen-shopping-list');
+            else if (tabKey === 'scan') showScreen('screen-scan-pay');
+        }
 
-      <button onclick="alert('Item collected! Moving to next target.')" class="w-full bg-[#FFC220] text-[#041E42] py-2.5 rounded-full font-extrabold text-xs shadow-md">
-        Item Collected! Next Target
-      </button>
-    </section>
+        // Dual Journey Handlers
+        function startHomeJourney() {
+            showScreen('screen-home-search');
+        }
 
-    <!-- STEP 4: EXPRESS SCAN & PAY -->
-    <section class="bg-white rounded-xl p-4 shadow-sm border border-gray-200 space-y-3">
-      <div class="flex justify-between items-center">
-        <span class="text-xs font-bold text-[#0071DC] uppercase tracking-wider" id="step4Tag">Step 4 • Skip Billing Lines</span>
-        <span class="bg-[#2A8703] text-white text-[10px] px-2 py-0.5 rounded-full font-bold">Express Self-Pay</span>
-      </div>
+        function startInStoreJourney() {
+            showScreen('screen-store-select');
+        }
 
-      <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
-        <div>
-          <p class="text-xs text-gray-500">Cart Total (2 items)</p>
-          <p class="text-base font-extrabold text-[#041E42]">₹177.00</p>
-        </div>
-        <button onclick="document.getElementById('exitPass').classList.remove('hidden')" class="bg-[#2A8703] text-white px-5 py-2 rounded-full font-bold text-xs shadow-md">
-          Pay via UPI
-        </button>
-      </div>
+        function updateSelectedStore(storeName) {
+            currentActiveStore = storeName;
+            document.getElementById('context-store-name').innerText = storeName;
+            document.getElementById('mode-selected-store').innerText = storeName;
+        }
 
-      <div id="exitPass" class="hidden p-3 bg-green-50 border border-green-200 rounded-lg text-center space-y-2">
-        <p class="text-xs font-bold text-[#2A8703]">✓ Payment Successful! Show QR at Express Exit Gate</p>
-        <div class="w-20 h-20 bg-white border-2 border-gray-800 mx-auto flex items-center justify-center font-mono text-[9px] text-gray-600 rounded">
-          [ EXIT PASS QR ]
-        </div>
-      </div>
-    </section>
+        function simulateQRStoreScan() {
+            showToast('Store QR Code Scanned!', 'fa-qrcode');
+            confirmStoreSelection();
+        }
 
-  </main>
+        function confirmStoreSelection() {
+            showScreen('screen-store-mode');
+        }
 
-  <script>
-    const translations = {
-      en: {
-        step1Tag: "Step 1 • Check Stock Before Bike Ride",
-        step2Tag: "Step 2 • Active Shopping List",
-        step3Tag: "Step 3 • In-Store Navigation",
-        step4Tag: "Step 4 • Skip Billing Lines"
-      },
-      ta: {
-        step1Tag: "படி 1 • பைக்கில் கிளம்புவதற்கு முன் இருப்பை பார்க்கவும்",
-        step2Tag: "படி 2 • உங்கள் ஷாப்பிங் பட்டியல்",
-        step3Tag: "படி 3 • கடையில் வழிசெலுத்தல் (AR)",
-        step4Tag: "படி 4 • நீண்ட வரிசைகளை தவிர்க்கவும்"
-      },
-      hi: {
-        step1Tag: "चरण 1 • बाइक से जाने से पहले स्टॉक जांचें",
-        step2Tag: "चरण 2 • सक्रिय खरीदारी सूची",
-        step3Tag: "चरण 3 • स्टोर में दिशा-निर्देश (AR)",
-        step4Tag: "चरण 4 • लंबी लाइनों से बचें"
-      }
-    };
+        function openShoppingListMode() {
+            showScreen('screen-shopping-list');
+        }
 
-    function changeLanguage(lang) {
-      const t = translations[lang] || translations.en;
-      document.getElementById('step1Tag').innerText = t.step1Tag;
-      document.getElementById('step2Tag').innerText = t.step2Tag;
-      document.getElementById('step3Tag').innerText = t.step3Tag;
-      document.getElementById('step4Tag').innerText = t.step4Tag;
-    }
+        function openBrowseCatalogMode() {
+            showScreen('screen-browse-catalog');
+        }
 
-    function addVariant(name, price, aisle) {
-      const list = document.getElementById('activeCartList');
-      const div = document.createElement('div');
-      div.className = "flex justify-between items-center p-2.5 bg-gray-50 rounded-lg border border-gray-200 text-xs font-medium";
-      div.innerHTML = `
-        <div>
-          <p class="font-bold text-[#041E42]">🛒 ${name}</p>
-          <p class="text-[10px] text-gray-500">Added Item • ${price}</p>
-        </div>
-        <span class="bg-blue-100 text-[#0071DC] px-2 py-1 rounded-full font-bold">${aisle} • Bay 1</span>
-      `;
-      list.prepend(div);
-      alert(name + " added to your list!");
-    }
-  </script>
+        // Home Search Screen Renderer
+        function filterHomeCategory(cat) {
+            selectedHomeCategory = cat;
+            document.querySelectorAll('.hcat-btn').forEach(btn => {
+                btn.classList.remove('bg-walmart-blue', 'text-white');
+                btn.classList.add('bg-white', 'text-walmart-navy');
+            });
+            const active = document.getElementById(`hcat-${cat}`);
+            if (active) {
+                active.classList.remove('bg-white', 'text-walmart-navy');
+                active.classList.add('bg-walmart-blue', 'text-white');
+            }
+            renderHomeSearchResults();
+        }
+
+        function renderHomeSearchResults() {
+            const query = document.getElementById('home-product-search').value.toLowerCase().trim();
+            const container = document.getElementById('home-search-results');
+            if (!container) return;
+
+            const filtered = catalogMasterDB.filter(item => {
+                const matchCat = (selectedHomeCategory === 'All' || item.dept === selectedHomeCategory);
+                const matchQuery = item.name.toLowerCase().includes(query) || item.dept.toLowerCase().includes(query);
+                return matchCat && matchQuery;
+            });
+
+            container.innerHTML = filtered.map(item => `
+                <div class="bg-white rounded-3xl p-3.5 border border-gray-200 shadow-sm space-y-2.5">
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-blue-50 text-walmart-blue rounded-2xl flex items-center justify-center font-bold text-base shrink-0">
+                                <i class="fa-solid ${item.icon}"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-extrabold text-xs text-walmart-navy">${item.name}</h4>
+                                <p class="text-[10px] text-gray-500">${item.dept} • <span class="text-walmart-green font-bold">In Stock • 4 units left</span></p>
+                                <p class="text-[10px] text-gray-400 mt-0.5"><i class="fa-solid fa-location-dot text-walmart-blue mr-1"></i>${currentActiveStore} • 0.8 km</p>
+                            </div>
+                        </div>
+                        <span class="text-xs font-black text-walmart-navy">₹${item.variants[0].price}</span>
+                    </div>
+
+                    <div class="pt-2 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-[10px] font-bold text-gray-500">Select Size Option:</span>
+                        <div class="flex space-x-1">
+                            ${item.variants.map(v => `
+                                <button onclick="addItemVariantToList('${item.name} ${v.label}', '${v.label}', '${item.aisle}', '${item.bay}', '${item.shelf}', ${v.price}, '${item.icon}')" 
+                                    class="px-2 py-1 bg-gray-50 hover:bg-walmart-yellow border border-gray-200 rounded-lg text-[10px] font-bold text-walmart-navy transition-all">
+                                    ${v.label} (₹${v.price})
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Shopping List Management
+        function addItemVariantToList(name, variant, aisle, bay, shelf, price, icon) {
+            userShoppingList.push({
+                id: Date.now().toString(),
+                name: name,
+                variant: variant,
+                aisle: aisle,
+                bay: bay,
+                shelf: shelf,
+                price: price,
+                icon: icon,
+                collected: false
+            });
+            renderShoppingList();
+            renderScanCartSummary();
+            showToast(`Added ${name} to list`, 'fa-cart-plus');
+        }
+
+        function addCustomItemToList() {
+            const input = document.getElementById('custom-list-input');
+            const val = input.value.trim();
+            if (!val) return;
+
+            userShoppingList.push({
+                id: Date.now().toString(),
+                name: val,
+                variant: 'Standard',
+                aisle: 'Aisle 3A',
+                bay: 'Bay 1',
+                shelf: 'Middle Shelf',
+                price: 45,
+                icon: 'fa-bag-shopping',
+                collected: false
+            });
+
+            input.value = '';
+            renderShoppingList();
+            renderScanCartSummary();
+            showToast(`Added ${val}`, 'fa-plus');
+        }
+
+        function removeListItem(id) {
+            userShoppingList = userShoppingList.filter(i => i.id !== id);
+            renderShoppingList();
+            renderScanCartSummary();
+            showToast('Item removed', 'fa-trash');
+        }
+
+        function renderShoppingList() {
+            const container = document.getElementById('shopping-list-container');
+            const summary = document.getElementById('list-items-summary');
+            const badge = document.getElementById('list-count-badge');
+            if (!container) return;
+
+            let totalEst = 0;
+            userShoppingList.forEach(i => totalEst += i.price);
+
+            badge.innerText = `${userShoppingList.length} Items`;
+            summary.innerText = `${userShoppingList.length} items • Estimated ₹${totalEst}`;
+
+            container.innerHTML = userShoppingList.map(item => `
+                <div class="bg-white p-3.5 rounded-3xl border border-gray-200 shadow-sm flex items-center justify-between">
+                    <div class="flex items-center space-x-3 overflow-hidden">
+                        <div class="w-9 h-9 ${item.collected ? 'bg-green-100 text-walmart-green' : 'bg-blue-50 text-walmart-blue'} rounded-2xl flex items-center justify-center text-sm font-bold shrink-0">
+                            <i class="fa-solid ${item.collected ? 'fa-check' : item.icon}"></i>
+                        </div>
+                        <div class="overflow-hidden">
+                            <h4 class="text-xs font-extrabold text-walmart-navy truncate ${item.collected ? 'line-through text-gray-400' : ''}">${item.name}</h4>
+                            <p class="text-[10px] font-bold text-walmart-blue">${item.aisle} • ${item.bay} • ${item.shelf}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2 shrink-0">
+                        <span class="text-xs font-black text-walmart-navy">₹${item.price}</span>
+                        <button onclick="removeListItem('${item.id}')" class="text-gray-300 hover:text-red-500 p-1">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Browse Catalog Renderer
+        function filterBrowseCategory(cat) {
+            selectedBrowseCategory = cat;
+            document.querySelectorAll('.bcat-btn').forEach(btn => {
+                btn.classList.remove('bg-walmart-blue', 'text-white');
+                btn.classList.add('bg-white', 'text-walmart-navy');
+            });
+            const active = document.getElementById(`bcat-${cat}`);
+            if (active) {
+                active.classList.remove('bg-white', 'text-walmart-navy');
+                active.classList.add('bg-walmart-blue', 'text-white');
+            }
+            renderBrowseCatalog();
+        }
+
+        function renderBrowseCatalog() {
+            const query = document.getElementById('catalog-search-input').value.toLowerCase().trim();
+            const container = document.getElementById('browse-catalog-container');
+            if (!container) return;
+
+            const filtered = catalogMasterDB.filter(item => {
+                const matchCat = (selectedBrowseCategory === 'All' || item.dept === selectedBrowseCategory);
+                const matchQuery = item.name.toLowerCase().includes(query) || item.dept.toLowerCase().includes(query);
+                return matchCat && matchQuery;
+            });
+
+            container.innerHTML = filtered.map(item => `
+                <div class="bg-white p-3.5 rounded-3xl border border-gray-200 shadow-sm flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center font-bold text-base shrink-0">
+                            <i class="fa-solid ${item.icon}"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-extrabold text-xs text-walmart-navy">${item.name}</h4>
+                            <p class="text-[10px] text-gray-500">${item.aisle} • ₹${item.variants[0].price}</p>
+                        </div>
+                    </div>
+                    <button onclick="addItemVariantToList('${item.name}', '${item.variants[0].label}', '${item.aisle}', '${item.bay}', '${item.shelf}', ${item.variants[0].price}, '${item.icon}')" 
+                        class="bg-walmart-blue text-white font-bold text-xs px-3.5 py-1.5 rounded-full hover:bg-blue-800 shadow-sm">
+                        Add
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // AR Navigation Engine
+        function startARNavigation() {
+            if (userShoppingList.length === 0) {
+                showToast('Add items to list first', 'fa-info-circle');
+                return;
+            }
+
+            activeARIndex = 0;
+            updateARScreenUI();
+            showScreen('screen-ar-camera', true);
+            showToast('AR Wayfinder Active • Follow Yellow Path', 'fa-camera');
+        }
+
+        function updateARScreenUI() {
+            const currentItem = userShoppingList[activeARIndex];
+            if (!currentItem) return;
+
+            document.getElementById('ar-pin-name').innerText = currentItem.name;
+            document.getElementById('ar-pin-badge').innerText = `${currentItem.aisle} • ${currentItem.bay} • ${currentItem.shelf}`;
+            document.getElementById('ar-pin-icon').className = `fa-solid ${currentItem.icon}`;
+
+            const nextItem = userShoppingList[(activeARIndex + 1) % userShoppingList.length];
+            document.getElementById('ar-next-name').innerText = nextItem.name;
+            document.getElementById('ar-next-icon').className = `fa-solid ${nextItem.icon}`;
+        }
+
+        function markARItemCollected() {
+            userShoppingList[activeARIndex].collected = true;
+            renderShoppingList();
+            showToast('Item Collected!', 'fa-circle-check');
+
+            if (activeARIndex < userShoppingList.length - 1) {
+                activeARIndex++;
+                updateARScreenUI();
+            } else {
+                setTimeout(() => {
+                    showScreen('screen-scan-pay');
+                    showToast('All Items Collected! Ready for Checkout', 'fa-qrcode');
+                }, 400);
+            }
+        }
+
+        function exitARCamera() {
+            showScreen('screen-shopping-list');
+        }
+
+        // Scan & Pay Checkout Engine
+        function renderScanCartSummary() {
+            const container = document.getElementById('scan-cart-items-list');
+            const totalEl = document.getElementById('scan-cart-total-price');
+            const countEl = document.getElementById('scan-cart-count');
+            if (!container) return;
+
+            let total = 0;
+            container.innerHTML = userShoppingList.map(item => {
+                total += item.price;
+                return `
+                    <div class="flex justify-between items-center text-xs pb-1 border-b border-gray-100">
+                        <span class="font-semibold text-walmart-navy">${item.name}</span>
+                        <span class="font-extrabold text-walmart-navy">₹${item.price}.00</span>
+                    </div>
+                `;
+            }).join('');
+
+            totalEl.innerText = `₹${total}.00`;
+            countEl.innerText = `${userShoppingList.length} items`;
+            document.getElementById('success-total-paid').innerText = `₹${total}.00 paid via UPI`;
+        }
+
+        function simulateBarcodeScan() {
+            showToast('Scanning Shelf Barcode...', 'fa-barcode');
+            setTimeout(() => {
+                addItemVariantToList('Bonus Item Scanned', '500g', 'Express Bay', 'Bay 1', 'Shelf 1', 35, 'fa-barcode');
+                showToast('Item Scanned & Added!', 'fa-circle-check');
+            }, 600);
+        }
+
+        function processUPIPayment() {
+            showScreen('screen-payment-success');
+            showToast('UPI Payment Successful!', 'fa-circle-check');
+        }
+
+        function resetAppToHome() {
+            showScreen('screen-landing');
+            showToast('Shopping Completed!', 'fa-trophy');
+        }
+
+        // Language Controller
+        function openLanguageModal() {
+            document.getElementById('language-modal').classList.remove('hidden');
+        }
+
+        function closeLanguageModal() {
+            document.getElementById('language-modal').classList.add('hidden');
+        }
+
+        function setLanguage(langKey) {
+            currentLang = langKey;
+            document.getElementById('active-lang-code').innerText = langKey.toUpperCase();
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[langKey] && i18n[langKey][key]) {
+                    el.innerText = i18n[langKey][key];
+                }
+            });
+
+            closeLanguageModal();
+            showToast(langKey === 'ta' ? 'தமிழ் தேர்வு செய்யப்பட்டது' : langKey === 'hi' ? 'हिंदी चुनी गई' : 'English Selected', 'fa-globe');
+        }
+
+        // Toast Notification System
+        function showToast(msg, iconClass = 'fa-circle-info') {
+            const toast = document.getElementById('toast-box');
+            const msgEl = document.getElementById('toast-msg');
+            const iconEl = document.getElementById('toast-icon');
+
+            msgEl.innerText = msg;
+            iconEl.className = `fa-solid ${iconClass} text-walmart-yellow`;
+
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            toast.classList.add('opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 2000);
+        }
+    </script>
 </body>
 </html>
