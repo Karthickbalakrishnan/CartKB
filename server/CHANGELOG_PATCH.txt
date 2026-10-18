@@ -1,0 +1,15 @@
+*** Begin Patch Notes ***
+Added server/ directory implementing Fastify-based backend with Postgres and Redis support.
+New endpoints:
+- POST /api/auth/register
+- POST /api/auth/login
+- GET /api/products
+- GET /api/products/:id
+- GET /api/stores
+- GET /api/inventory
+- POST /api/inventory (auth required)
+- POST /api/orders (auth required)
+- GET /api/orders/my (auth required)
+
+Added docker-compose.yml to run Postgres, Redis and the server for local dev. Added DB init and seed scripts (initDb.js, seed.js).
+*** End Patch Notes ***

@@ -1,0 +1,20 @@
+{
+  "name": "cartkb-server",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "node index.js",
+    "start": "node index.js",
+    "init-db": "node initDb.js",
+    "seed": "node seed.js"
+  },
+  "dependencies": {
+    "fastify": "^4.22.0",
+    "fastify-cors": "^8.2.0",
+    "fastify-jwt": "^6.0.0",
+    "pg": "^8.10.0",
+    "ioredis": "^5.3.2",
+    "bcrypt": "^5.1.0",
+    "dotenv": "^16.0.3"
+  }
+}
