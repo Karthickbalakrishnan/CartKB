@@ -1,0 +1,1 @@
+/* minimal Header and Footer updates for icons */
