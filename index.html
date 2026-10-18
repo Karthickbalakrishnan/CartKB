@@ -85,17 +85,6 @@
         .custom-scroll::-webkit-scrollbar { width: 4px; }
         .custom-scroll::-webkit-scrollbar-track { background: #F2F8FD; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
-
-        .shimmer {
-            background: linear-gradient(90deg, #f0f4f8 0%, #e2e8f0 50%, #f0f4f8 100%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-0 sm:p-4">
@@ -128,7 +117,6 @@
             </div>
 
             <div class="flex items-center space-x-2">
-                <!-- Language Trigger Button -->
                 <button onclick="openLanguageModal()" class="bg-white/15 hover:bg-white/25 text-white text-xs font-extrabold px-3 py-1 rounded-full border border-white/20 flex items-center space-x-1.5 transition-all">
                     <i class="fa-solid fa-globe text-[11px] text-walmart-yellow"></i>
                     <span id="active-lang-code">EN</span>
@@ -137,11 +125,11 @@
             </div>
         </header>
 
-        <!-- Active Location GPS Banner (Screen 1 Feature) -->
+        <!-- Active Location GPS Banner -->
         <div id="gps-location-banner" class="bg-walmart-navy text-white px-4 py-2 text-xs flex justify-between items-center z-30 shrink-0 shadow-inner">
             <div class="flex items-center space-x-2 truncate pr-2">
                 <i class="fa-solid fa-location-crosshairs text-walmart-yellow animate-pulse text-xs"></i>
-                <span id="detected-address" class="font-semibold truncate text-[11px]">Detecting GPS... 28, S Boag Rd, T. Nagar, Chennai</span>
+                <span id="detected-address" class="font-semibold truncate text-[11px]">28, South West Boag Road, T. Nagar, Chennai</span>
             </div>
             <button onclick="refreshGPSLocation()" class="bg-white/15 hover:bg-white/30 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0 border border-white/20">
                 <i class="fa-solid fa-rotate-right mr-1"></i>Refetch
@@ -151,11 +139,8 @@
         <!-- MAIN SCROLLABLE VIEWPORT -->
         <main id="main-viewport" class="flex-1 overflow-y-auto custom-scroll relative flex flex-col">
 
-            <!-- ================================================================= -->
-            <!-- SCREEN 0: ACCURATE GPS LOCATION & NEARBY STORES (FIRST SCREEN)    -->
-            <!-- ================================================================= -->
+            <!-- SCREEN 0: ACCURATE GPS LOCATION & NEARBY STORES -->
             <section id="screen-landing" class="p-4 space-y-4 flex-1 flex flex-col justify-between">
-                
                 <div class="space-y-4">
                     <!-- Accurate Location Status Badge -->
                     <div class="bg-blue-50 border border-blue-200 rounded-2xl p-3 flex items-center justify-between shadow-sm">
@@ -165,7 +150,7 @@
                             </div>
                             <div>
                                 <div class="flex items-center space-x-1.5">
-                                    <span class="text-xs font-black text-walmart-navy">Chennai, TN</span>
+                                    <span class="text-xs font-black text-walmart-navy" id="txt-location-city">Chennai, TN</span>
                                     <span class="bg-walmart-green text-white text-[9px] font-black px-1.5 py-0.2 rounded-full uppercase">GPS 100% Accurate</span>
                                 </div>
                                 <p class="text-[10px] text-gray-500 font-medium">T. Nagar • South Boag Road Corridor</p>
@@ -174,12 +159,12 @@
                         <i class="fa-solid fa-circle-check text-walmart-green text-base"></i>
                     </div>
 
-                    <!-- Festival & Offers Creative Carousel -->
+                    <!-- Festival & Offers Creative Banner -->
                     <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 p-4 text-walmart-navy shadow-md border border-amber-300">
                         <div class="relative z-10 space-y-1">
-                            <span class="bg-walmart-navy text-walmart-yellow text-[9px] font-black uppercase px-2 py-0.5 rounded-full inline-block">🪔 Diwali & Festive Dhamaka</span>
-                            <h3 class="text-base font-black tracking-tight leading-tight">Grand Festive Super Savings!</h3>
-                            <p class="text-[11px] font-bold text-walmart-navy/90">Up to 50% OFF + BOGO on Sweets, Oils & Puja Essentials</p>
+                            <span class="bg-walmart-navy text-walmart-yellow text-[9px] font-black uppercase px-2 py-0.5 rounded-full inline-block" id="txt-banner-tag">🪔 Diwali & Festive Dhamaka</span>
+                            <h3 class="text-base font-black tracking-tight leading-tight" id="txt-banner-title">Grand Festive Super Savings!</h3>
+                            <p class="text-[11px] font-bold text-walmart-navy/90" id="txt-banner-desc">Up to 50% OFF + BOGO on Sweets, Oils & Puja Essentials</p>
                             <div class="pt-2 flex items-center space-x-2">
                                 <span class="bg-white/90 text-walmart-navy px-3 py-1 rounded-full text-[10px] font-black shadow-sm">
                                     <i class="fa-solid fa-tag text-walmart-blue mr-1"></i> Use Code: FESTIVE50
@@ -189,14 +174,14 @@
                         <i class="fa-solid fa-sparkles text-6xl text-white/20 absolute -right-2 -bottom-2 pointer-events-none"></i>
                     </div>
 
-                    <!-- Nearby Stores List (Accurate GPS Based) -->
+                    <!-- Nearby Verified Stores -->
                     <div class="space-y-2.5">
                         <div class="flex justify-between items-center">
-                            <h3 class="text-xs font-black text-walmart-navy uppercase tracking-wider">Nearby Verified Stores</h3>
+                            <h3 class="text-xs font-black text-walmart-navy uppercase tracking-wider" id="txt-stores-title">Nearby Verified Stores</h3>
                             <span class="text-[10px] font-bold text-walmart-blue">4 Stores Nearby</span>
                         </div>
 
-                        <!-- Store Card 1 -->
+                        <!-- Store Cards -->
                         <div onclick="selectStoreAndProceed('Main Street Supercenter')" class="bg-white p-3.5 rounded-3xl border-2 border-walmart-blue shadow-sm hover:shadow-md transition-all cursor-pointer relative">
                             <span class="absolute top-3 right-3 bg-walmart-blue text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase">Closest Store</span>
                             <div class="flex items-center space-x-3">
@@ -213,7 +198,6 @@
                             </div>
                         </div>
 
-                        <!-- Store Card 2 -->
                         <div onclick="selectStoreAndProceed('Saravana Stores Superstore')" class="bg-white p-3.5 rounded-3xl border border-gray-200 shadow-sm hover:border-walmart-blue transition-all cursor-pointer">
                             <div class="flex items-center space-x-3">
                                 <img src="https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=100&auto=format&fit=crop&q=80" alt="Superstore" class="w-12 h-12 rounded-2xl object-cover shrink-0 border border-gray-200">
@@ -229,7 +213,6 @@
                             </div>
                         </div>
 
-                        <!-- Store Card 3 -->
                         <div onclick="selectStoreAndProceed('Nilgiris Supermarket')" class="bg-white p-3.5 rounded-3xl border border-gray-200 shadow-sm hover:border-walmart-blue transition-all cursor-pointer">
                             <div class="flex items-center space-x-3">
                                 <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=100&auto=format&fit=crop&q=80" alt="Market" class="w-12 h-12 rounded-2xl object-cover shrink-0 border border-gray-200">
@@ -244,13 +227,13 @@
                         </div>
                     </div>
 
-                    <!-- Dual Journey Action Cards -->
+                    <!-- Dual Journey Choice -->
                     <div class="grid grid-cols-2 gap-3 pt-2">
                         <div onclick="startHomeJourney()" class="bg-white p-3.5 rounded-3xl border border-gray-200 shadow-sm hover:border-walmart-blue cursor-pointer group text-center space-y-1">
                             <div class="w-10 h-10 bg-blue-50 text-walmart-blue rounded-2xl flex items-center justify-center font-black mx-auto text-base group-hover:bg-walmart-blue group-hover:text-white transition-colors">
                                 <i class="fa-solid fa-house-user"></i>
                             </div>
-                            <h4 class="text-xs font-black text-walmart-navy">Start at Home</h4>
+                            <h4 class="text-xs font-black text-walmart-navy" id="btn-home-journey">Start at Home</h4>
                             <p class="text-[9px] text-gray-500">Check stock & compare</p>
                         </div>
 
@@ -258,28 +241,25 @@
                             <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center font-black mx-auto text-base group-hover:bg-amber-500 group-hover:text-white transition-colors">
                                 <i class="fa-solid fa-store"></i>
                             </div>
-                            <h4 class="text-xs font-black text-walmart-navy">In-Store Now</h4>
+                            <h4 class="text-xs font-black text-walmart-navy" id="btn-instore-journey">In-Store Now</h4>
                             <p class="text-[9px] text-gray-500">QR Scan & AR Nav</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="text-center text-[10px] text-gray-400 font-medium pb-2">
-                    CartKB • Accurate GPS Store Discovery & Live Price Match Engine
+                    CartKB • 1000+ Verified SKUs & Live Price Comparison Engine
                 </div>
             </section>
 
-
-            <!-- ================================================================= -->
-            <!-- SCREEN 1: PRE-RIDE SEARCH & PRICE COMPARISON                      -->
-            <!-- ================================================================= -->
+            <!-- SCREEN 1: PRE-RIDE SEARCH & PRICE COMPARISON -->
             <section id="screen-home-search" class="p-4 space-y-3.5 flex-1 flex flex-col hidden">
                 <div class="flex justify-between items-center">
                     <div>
-                        <span class="bg-blue-100 text-walmart-blue text-[9px] font-black uppercase px-2.5 py-0.5 rounded-full">Pre-Ride Check</span>
-                        <h2 class="text-base font-black text-walmart-navy mt-1">Search & Compare Prices</h2>
+                        <span class="bg-blue-100 text-walmart-blue text-[9px] font-black uppercase px-2.5 py-0.5 rounded-full" id="txt-preride-tag">Pre-Ride Check</span>
+                        <h2 class="text-base font-black text-walmart-navy mt-1" id="txt-preride-title">Search & Compare Prices</h2>
                     </div>
-                    <span class="text-xs font-bold text-walmart-blue"><i class="fa-solid fa-code-compare mr-1"></i>Live Comparison</span>
+                    <span class="text-xs font-bold text-walmart-blue"><i class="fa-solid fa-code-compare mr-1"></i>1000+ Live SKUs</span>
                 </div>
 
                 <!-- Search Bar -->
@@ -287,34 +267,32 @@
                     <input type="text" id="home-product-search" value="Milk" 
                         onkeyup="renderHomeSearchResults()" 
                         class="w-full pl-9 pr-24 py-2.5 bg-white border-2 border-walmart-blue rounded-2xl text-xs font-bold text-walmart-navy focus:outline-none shadow-sm"
-                        placeholder="Search milk, vinegar, oil, sweets...">
+                        placeholder="Search 1000+ items (Milk, Vinegar, Oil, Sweets)...">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-walmart-blue text-xs"></i>
                     <button onclick="renderHomeSearchResults()" class="absolute right-1.5 top-1.5 bg-walmart-yellow text-walmart-navy font-black text-xs px-3 py-1.5 rounded-xl">
                         Search
                     </button>
                 </div>
 
-                <!-- Category Pills -->
+                <!-- Category Filters -->
                 <div class="flex items-center space-x-1.5 overflow-x-auto no-scrollbar py-0.5 text-xs">
-                    <button onclick="filterHomeCategory('All')" id="hcat-All" class="hcat-btn bg-walmart-blue text-white px-3 py-1 rounded-full font-bold shrink-0">All (500+)</button>
+                    <button onclick="filterHomeCategory('All')" id="hcat-All" class="hcat-btn bg-walmart-blue text-white px-3 py-1 rounded-full font-bold shrink-0">All (1000+)</button>
                     <button onclick="filterHomeCategory('Dairy')" id="hcat-Dairy" class="hcat-btn bg-white border border-gray-200 text-walmart-navy px-3 py-1 rounded-full font-bold shrink-0">🥛 Dairy</button>
                     <button onclick="filterHomeCategory('Kitchen')" id="hcat-Kitchen" class="hcat-btn bg-white border border-gray-200 text-walmart-navy px-3 py-1 rounded-full font-bold shrink-0">🍳 Kitchen</button>
                     <button onclick="filterHomeCategory('Snacks')" id="hcat-Snacks" class="hcat-btn bg-white border border-gray-200 text-walmart-navy px-3 py-1 rounded-full font-bold shrink-0">🍿 Snacks</button>
                     <button onclick="filterHomeCategory('Bathroom')" id="hcat-Bathroom" class="hcat-btn bg-white border border-gray-200 text-walmart-navy px-3 py-1 rounded-full font-bold shrink-0">🧼 Bathroom</button>
+                    <button onclick="filterHomeCategory('Hall')" id="hcat-Hall" class="hcat-btn bg-white border border-gray-200 text-walmart-navy px-3 py-1 rounded-full font-bold shrink-0">🛋️ Hall</button>
                     <button onclick="filterHomeCategory('Medical')" id="hcat-Medical" class="hcat-btn bg-white border border-gray-200 text-walmart-navy px-3 py-1 rounded-full font-bold shrink-0">💊 Medical</button>
                     <button onclick="filterHomeCategory('Festival')" id="hcat-Festival" class="hcat-btn bg-amber-100 border border-amber-300 text-amber-900 px-3 py-1 rounded-full font-bold shrink-0">🪔 Festival Offers</button>
                 </div>
 
-                <!-- Results & Price Comparison Container -->
+                <!-- Results Container -->
                 <div id="home-search-results" class="space-y-3 flex-1 overflow-y-auto custom-scroll pr-0.5">
-                    <!-- Dynamic rendering via JS -->
+                    <!-- Dynamic rendering -->
                 </div>
             </section>
 
-
-            <!-- ================================================================= -->
-            <!-- SCREEN 2: IN-STORE STORE SELECTOR / QR SCAN                      -->
-            <!-- ================================================================= -->
+            <!-- SCREEN 2: IN-STORE SELECTOR -->
             <section id="screen-store-select" class="p-4 space-y-4 flex-1 flex flex-col justify-between hidden">
                 <div class="space-y-4">
                     <div>
@@ -352,10 +330,7 @@
                 </button>
             </section>
 
-
-            <!-- ================================================================= -->
-            <!-- SCREEN 3: IN-STORE MODE CHOICE                                    -->
-            <!-- ================================================================= -->
+            <!-- SCREEN 3: IN-STORE MODE CHOICE -->
             <section id="screen-store-mode" class="p-4 space-y-4 flex-1 flex flex-col justify-between hidden">
                 <div class="space-y-4">
                     <div class="bg-green-50 p-3.5 rounded-2xl border border-green-200 flex items-center space-x-3">
@@ -390,7 +365,7 @@
                             </div>
                             <div>
                                 <h4 class="text-xs font-extrabold text-walmart-navy">Browse & search items</h4>
-                                <p class="text-[10px] text-gray-500">Search products on the fly</p>
+                                <p class="text-[10px] text-gray-500">Search 1000+ SKUs on the fly</p>
                             </div>
                         </div>
                         <i class="fa-solid fa-chevron-right text-gray-400 group-hover:text-amber-500 transition-colors text-xs"></i>
@@ -403,10 +378,7 @@
                 </div>
             </section>
 
-
-            <!-- ================================================================= -->
-            <!-- SCREEN 4: SHOPPING LIST WITH SPATIAL AISLE MAP                    -->
-            <!-- ================================================================= -->
+            <!-- SCREEN 4: SHOPPING LIST -->
             <section id="screen-shopping-list" class="p-4 space-y-3.5 flex-1 flex flex-col hidden">
                 <div class="flex justify-between items-center">
                     <div>
@@ -418,7 +390,7 @@
                     </span>
                 </div>
 
-                <!-- Custom Add Input -->
+                <!-- Custom Input -->
                 <div class="flex space-x-2">
                     <input type="text" id="custom-list-input" placeholder="Add new item (e.g. Bread, Soap)..." 
                         class="flex-1 px-3.5 py-2 bg-white border border-gray-300 rounded-2xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-walmart-blue"
@@ -428,12 +400,10 @@
                     </button>
                 </div>
 
-                <!-- Shopping List Container -->
                 <div id="shopping-list-container" class="space-y-2.5 flex-1 overflow-y-auto custom-scroll pr-0.5">
-                    <!-- Dynamic rendering via JS -->
+                    <!-- Dynamic -->
                 </div>
 
-                <!-- Start AR Navigation -->
                 <div class="pt-2 border-t border-gray-200">
                     <button onclick="startARNavigation()" class="w-full bg-walmart-yellow hover:bg-walmart-yellowHover text-walmart-navy py-3 px-4 rounded-full font-black text-xs shadow-md flex items-center justify-center space-x-2">
                         <span>Start aisle camera navigation →</span>
@@ -441,43 +411,37 @@
                 </div>
             </section>
 
-
-            <!-- ================================================================= -->
-            <!-- SCREEN 5: BROWSE CATALOG                                          -->
-            <!-- ================================================================= -->
+            <!-- SCREEN 5: BROWSE CATALOG -->
             <section id="screen-browse-catalog" class="p-4 space-y-3.5 flex-1 flex flex-col hidden">
                 <div>
-                    <h2 class="text-base font-black text-walmart-navy">Browse Catalog</h2>
+                    <h2 class="text-base font-black text-walmart-navy">Browse Catalog (1000+ SKUs)</h2>
                     <p class="text-xs text-gray-500">Find items and add them to your list.</p>
                 </div>
 
                 <div class="relative">
-                    <input type="text" id="catalog-search-input" onkeyup="renderBrowseCatalog()" placeholder="Search 500+ items..." 
+                    <input type="text" id="catalog-search-input" onkeyup="renderBrowseCatalog()" placeholder="Search 1000+ items..." 
                         class="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-300 rounded-2xl text-xs font-bold text-walmart-navy focus:outline-none shadow-sm">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-gray-400 text-xs"></i>
                 </div>
 
                 <div class="flex items-center space-x-1.5 overflow-x-auto no-scrollbar py-0.5 text-xs">
-                    <button onclick="filterBrowseCategory('All')" id="bcat-All" class="bcat-btn bg-walmart-blue text-white px-3 py-1 rounded-full font-bold shrink-0">All (500+)</button>
+                    <button onclick="filterBrowseCategory('All')" id="bcat-All" class="bcat-btn bg-walmart-blue text-white px-3 py-1 rounded-full font-bold shrink-0">All (1000+)</button>
                     <button onclick="filterBrowseCategory('Dairy')" id="bcat-Dairy" class="bcat-btn bg-white border border-gray-200 text-walmart-navy px-3 py-1 rounded-full font-bold shrink-0">🥛 Dairy</button>
                     <button onclick="filterBrowseCategory('Kitchen')" id="bcat-Kitchen" class="bcat-btn bg-white border border-gray-200 text-walmart-navy px-3 py-1 rounded-full font-bold shrink-0">🍳 Kitchen</button>
                     <button onclick="filterBrowseCategory('Snacks')" id="bcat-Snacks" class="bcat-btn bg-white border border-gray-200 text-walmart-navy px-3 py-1 rounded-full font-bold shrink-0">🍿 Snacks</button>
                     <button onclick="filterBrowseCategory('Bathroom')" id="bcat-Bathroom" class="bcat-btn bg-white border border-gray-200 text-walmart-navy px-3 py-1 rounded-full font-bold shrink-0">🧼 Bathroom</button>
+                    <button onclick="filterBrowseCategory('Hall')" id="bcat-Hall" class="bcat-btn bg-white border border-gray-200 text-walmart-navy px-3 py-1 rounded-full font-bold shrink-0">🛋️ Hall</button>
                     <button onclick="filterBrowseCategory('Medical')" id="bcat-Medical" class="bcat-btn bg-white border border-gray-200 text-walmart-navy px-3 py-1 rounded-full font-bold shrink-0">💊 Medical</button>
                     <button onclick="filterBrowseCategory('Festival')" id="bcat-Festival" class="bcat-btn bg-amber-100 border border-amber-300 text-amber-900 px-3 py-1 rounded-full font-bold shrink-0">🪔 Festival</button>
                 </div>
 
                 <div id="browse-catalog-container" class="space-y-3 flex-1 overflow-y-auto custom-scroll pr-0.5">
-                    <!-- Dynamic rendering via JS -->
+                    <!-- Dynamic -->
                 </div>
             </section>
 
-
-            <!-- ================================================================= -->
-            <!-- SCREEN 6: SPATIAL AR CAMERA VIEW                                 -->
-            <!-- ================================================================= -->
+            <!-- SCREEN 6: SPATIAL AR CAMERA VIEW -->
             <section id="screen-ar-camera" class="relative flex-1 flex flex-col hidden overflow-hidden bg-black">
-                <!-- AR Backdrop -->
                 <div class="absolute inset-0 bg-slate-900 z-0 overflow-hidden">
                     <svg class="w-full h-full opacity-45 scale-105" viewBox="0 0 400 700" preserveAspectRatio="none">
                         <line x1="0" y1="700" x2="160" y2="280" stroke="#64748B" stroke-width="2" />
@@ -485,11 +449,9 @@
                         <polygon points="0,150 160,280 160,700 0,700" fill="#1E293B" />
                         <polygon points="400,150 240,280 240,700 400,700" fill="#1E293B" />
                         <polygon points="160,280 240,280 320,700 80,700" fill="#0F172A" />
-                        <line x1="20" y1="350" x2="140" y2="390" stroke="#475569" stroke-width="2" />
-                        <line x1="380" y1="350" x2="260" y2="390" stroke="#475569" stroke-width="2" />
                     </svg>
 
-                    <!-- Glowing Pathway -->
+                    <!-- Pathway -->
                     <div class="absolute inset-0 flex flex-col items-center justify-end pb-24 pointer-events-none">
                         <svg class="w-full h-3/5 ar-animated-path" viewBox="0 0 300 400" fill="none">
                             <defs>
@@ -520,7 +482,6 @@
                     </div>
                 </div>
 
-                <!-- Camera Controls -->
                 <div class="relative z-20 p-3 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent">
                     <button onclick="exitARCamera()" class="bg-black/60 text-white w-8 h-8 rounded-full flex items-center justify-center border border-white/20">
                         <i class="fa-solid fa-xmark text-sm"></i>
@@ -544,7 +505,6 @@
                     </div>
                 </div>
 
-                <!-- Bottom Next Item Overlay -->
                 <div class="mt-auto relative z-20 p-4 space-y-3 bg-gradient-to-t from-walmart-navy via-walmart-navy/95 to-transparent pt-6">
                     <div class="bg-white rounded-2xl p-3 shadow-xl border border-gray-100 flex items-center justify-between">
                         <div class="flex items-center space-x-3">
@@ -561,10 +521,7 @@
                 </div>
             </section>
 
-
-            <!-- ================================================================= -->
-            <!-- SCREEN 7: SCAN & PAY                                              -->
-            <!-- ================================================================= -->
+            <!-- SCREEN 7: SCAN & PAY -->
             <section id="screen-scan-pay" class="p-4 space-y-4 flex-1 flex flex-col justify-between hidden">
                 <div class="space-y-4">
                     <div>
@@ -597,7 +554,7 @@
                         </div>
 
                         <div id="scan-cart-items-list" class="space-y-2 text-xs">
-                            <!-- Dynamic Cart Items -->
+                            <!-- Dynamic -->
                         </div>
 
                         <div class="pt-2 border-t border-gray-200 flex justify-between items-center">
@@ -616,10 +573,7 @@
                 </div>
             </section>
 
-
-            <!-- ================================================================= -->
-            <!-- SCREEN 8: DIGITAL EXIT QR PASS SUCCESS                            -->
-            <!-- ================================================================= -->
+            <!-- SCREEN 8: PAYMENT SUCCESS & EXIT QR -->
             <section id="screen-payment-success" class="p-4 space-y-4 flex-1 flex flex-col justify-between hidden">
                 <div class="space-y-4 text-center">
                     <div class="w-14 h-14 bg-green-100 text-walmart-green rounded-full flex items-center justify-center text-2xl font-black mx-auto shadow-sm">
@@ -721,129 +675,104 @@
 
     </div>
 
-    <!-- Application JavaScript Engine -->
+    <!-- Application Engine JS -->
     <script>
-        // Multi-Image & Multi-Store Master Database
-        const catalogMasterDB = [
-            {
-                id: 'p1',
-                name: 'Fresh Toned Milk',
-                dept: 'Dairy',
-                aisle: 'Aisle 1A', bay: 'Bay 3', shelf: 'Middle Shelf',
-                image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=200&auto=format&fit=crop&q=80',
-                variants: [
-                    { label: '250ml', price: 18 },
-                    { label: '500ml (1/2L)', price: 32 },
-                    { label: '1L', price: 60 },
-                    { label: '2L', price: 115 }
-                ],
-                storePrices: [
-                    { store: 'Main Street Supercenter', price: 32, stock: 'In Stock' },
-                    { store: 'Saravana Stores', price: 30, stock: 'In Stock' },
-                    { store: 'Nilgiris Supermarket', price: 34, stock: 'Low Stock' },
-                    { store: 'City Fresh Market', price: 31, stock: 'In Stock' }
-                ]
-            },
-            {
-                id: 'p2',
-                name: 'Apple Cider Vinegar',
-                dept: 'Kitchen',
-                aisle: 'Aisle 2B', bay: 'Bay 4', shelf: 'Middle Shelf',
-                image: 'https://images.unsplash.com/photo-1598511726623-d7228a7e089d?w=200&auto=format&fit=crop&q=80',
-                variants: [
-                    { label: '250ml', price: 145 },
-                    { label: '500ml', price: 270 },
-                    { label: '1L', price: 490 }
-                ],
-                storePrices: [
-                    { store: 'Main Street Supercenter', price: 145, stock: '4 left' },
-                    { store: 'Saravana Stores', price: 140, stock: 'In Stock' },
-                    { store: 'Nilgiris Supermarket', price: 155, stock: '2 left' },
-                    { store: 'City Fresh Market', price: 148, stock: 'Out of Stock' }
-                ]
-            },
-            {
-                id: 'p3',
-                name: 'Kadalai Mittai / Chikki',
-                dept: 'Snacks',
-                aisle: 'Aisle 3C', bay: 'Bay 2', shelf: 'Middle Shelf',
-                image: 'https://images.unsplash.com/photo-1599599810769-bcde5a160d32?w=200&auto=format&fit=crop&q=80',
-                variants: [
-                    { label: '100g Pack', price: 25 },
-                    { label: '250g Pack', price: 60 }
-                ],
-                storePrices: [
-                    { store: 'Main Street Supercenter', price: 25, stock: 'In Stock' },
-                    { store: 'Saravana Stores', price: 22, stock: 'In Stock' },
-                    { store: 'Nilgiris Supermarket', price: 26, stock: 'In Stock' }
-                ]
-            },
-            {
-                id: 'p4',
-                name: 'Sunflower Cooking Oil',
-                dept: 'Kitchen',
-                aisle: 'Aisle 2A', bay: 'Bay 1', shelf: 'Lower Shelf',
-                image: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=200&auto=format&fit=crop&q=80',
-                variants: [
-                    { label: '500ml Pouch', price: 95 },
-                    { label: '1L Pouch', price: 180 },
-                    { label: '5L Can', price: 850 }
-                ],
-                storePrices: [
-                    { store: 'Main Street Supercenter', price: 180, stock: 'In Stock' },
-                    { store: 'Saravana Stores', price: 172, stock: 'In Stock' },
-                    { store: 'Nilgiris Supermarket', price: 185, stock: 'In Stock' }
-                ]
-            },
-            {
-                id: 'p5',
-                name: 'Diwali Festive Sweets Box',
-                dept: 'Festival',
-                aisle: 'Aisle 1B', bay: 'Bay 1', shelf: 'Special Festive Display',
-                image: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=200&auto=format&fit=crop&q=80',
-                variants: [
-                    { label: '250g Pack', price: 150 },
-                    { label: '500g Pack', price: 280 },
-                    { label: '1kg Premium', price: 520 }
-                ],
-                storePrices: [
-                    { store: 'Main Street Supercenter', price: 280, stock: 'Festive Stock' },
-                    { store: 'Saravana Stores', price: 265, stock: 'High Demand' },
-                    { store: 'Nilgiris Supermarket', price: 290, stock: 'In Stock' }
-                ]
-            },
-            {
-                id: 'p6',
-                name: 'Bathroom Floor Cleaner',
-                dept: 'Bathroom',
-                aisle: 'Aisle 4A', bay: 'Bay 3', shelf: 'Lower Shelf',
-                image: 'https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?w=200&auto=format&fit=crop&q=80',
-                variants: [
-                    { label: '250ml', price: 60 },
-                    { label: '500ml', price: 110 },
-                    { label: '1L Refill', price: 195 }
-                ],
-                storePrices: [
-                    { store: 'Main Street Supercenter', price: 110, stock: 'In Stock' },
-                    { store: 'Saravana Stores', price: 105, stock: 'In Stock' }
-                ]
-            },
-            {
-                id: 'p7',
-                name: 'Paracetamol Tablets',
-                dept: 'Medical',
-                aisle: 'Aisle 5A', bay: 'Bay 1', shelf: 'Top Shelf',
-                image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=200&auto=format&fit=crop&q=80',
-                variants: [
-                    { label: '500mg Strip', price: 30 },
-                    { label: '650mg Strip', price: 45 }
-                ],
-                storePrices: [
-                    { store: 'Main Street Supercenter', price: 45, stock: 'In Stock' },
-                    { store: 'Saravana Stores', price: 42, stock: 'In Stock' }
-                ]
-            }
+        // PROCEDURAL GENERATION ENGINE FOR 1000+ DYNAMIC SKUs
+        const baseCatalogTemplates = [
+            // Dairy
+            { name: "Fresh Toned Milk", dept: "Dairy", aisle: "Aisle 1A", bay: "Bay 3", shelf: "Middle Shelf", img: "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=200&auto=format&fit=crop&q=80", type: "fluid-small" },
+            { name: "Full Cream Cow Milk", dept: "Dairy", aisle: "Aisle 1A", bay: "Bay 4", shelf: "Lower Shelf", img: "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=200&auto=format&fit=crop&q=80", type: "fluid-small" },
+            { name: "Fresh Organic Paneer", dept: "Dairy", aisle: "Aisle 1B", bay: "Bay 2", shelf: "Top Shelf", img: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=200&auto=format&fit=crop&q=80", type: "grams" },
+            { name: "Amul Butter Unsalted", dept: "Dairy", aisle: "Aisle 1B", bay: "Bay 1", shelf: "Middle Shelf", img: "https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=200&auto=format&fit=crop&q=80", type: "grams" },
+            
+            // Kitchen & Oils
+            { name: "Apple Cider Vinegar", dept: "Kitchen", aisle: "Aisle 2B", bay: "Bay 4", shelf: "Middle Shelf", img: "https://images.unsplash.com/photo-1598511726623-d7228a7e089d?w=200&auto=format&fit=crop&q=80", type: "fluid-vinegar" },
+            { name: "Sunflower Cooking Oil", dept: "Kitchen", aisle: "Aisle 2A", bay: "Bay 1", shelf: "Lower Shelf", img: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=200&auto=format&fit=crop&q=80", type: "oil" },
+            { name: "Pure Gingelly Oil", dept: "Kitchen", aisle: "Aisle 2A", bay: "Bay 3", shelf: "Lower Shelf", img: "https://images.unsplash.com/photo-1620706857370-e1b9770e8bb1?w=200&auto=format&fit=crop&q=80", type: "oil" },
+            { name: "Chakki Fresh Whole Wheat Atta", dept: "Kitchen", aisle: "Aisle 2C", bay: "Bay 2", shelf: "Bottom Shelf", img: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=200&auto=format&fit=crop&q=80", type: "bulk-kg" },
+            { name: "Organic Ponni Boiled Rice", dept: "Kitchen", aisle: "Aisle 2C", bay: "Bay 5", shelf: "Bottom Shelf", img: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=200&auto=format&fit=crop&q=80", type: "bulk-kg" },
+            
+            // Snacks & Sweets
+            { name: "Kadalai Mittai / Peanut Chikki", dept: "Snacks", aisle: "Aisle 3C", bay: "Bay 2", shelf: "Middle Shelf", img: "https://images.unsplash.com/photo-1599599810769-bcde5a160d32?w=200&auto=format&fit=crop&q=80", type: "snacks" },
+            { name: "Crispy Roasted Cashews", dept: "Snacks", aisle: "Aisle 3A", bay: "Bay 1", shelf: "Middle Shelf", img: "https://images.unsplash.com/photo-1536591375315-1988d6960926?w=200&auto=format&fit=crop&q=80", type: "grams" },
+            { name: "Traditional Murukku Combo", dept: "Snacks", aisle: "Aisle 3B", bay: "Bay 3", shelf: "Middle Shelf", img: "https://images.unsplash.com/photo-1621996346565-e3d5d6281358?w=200&auto=format&fit=crop&q=80", type: "grams" },
+
+            // Festival Deals
+            { name: "Diwali Special Sweets Box", dept: "Festival", aisle: "Aisle 1B", bay: "Bay 1", shelf: "Special Display", img: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=200&auto=format&fit=crop&q=80", type: "sweets" },
+            { name: "Festive Camphor & Brass Lamp Pack", dept: "Festival", aisle: "Aisle 1C", bay: "Bay 2", shelf: "Special Display", img: "https://images.unsplash.com/photo-1605371924599-2d0365da1ae0?w=200&auto=format&fit=crop&q=80", type: "standard" },
+
+            // Bathroom
+            { name: "Bathroom Floor Cleaner Liquid", dept: "Bathroom", aisle: "Aisle 4A", bay: "Bay 3", shelf: "Lower Shelf", img: "https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?w=200&auto=format&fit=crop&q=80", type: "fluid-vinegar" },
+            { name: "Moisturizing Bathing Soap 3-Pack", dept: "Bathroom", aisle: "Aisle 4B", bay: "Bay 1", shelf: "Top Shelf", img: "https://images.unsplash.com/photo-1607006411601-775c8cc64f86?w=200&auto=format&fit=crop&q=80", type: "standard" },
+
+            // Hall & Living
+            { name: "Aromatic Lavender Room Spray", dept: "Hall", aisle: "Aisle 4C", bay: "Bay 2", shelf: "Top Shelf", img: "https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?w=200&auto=format&fit=crop&q=80", type: "fluid-vinegar" },
+
+            // Medical
+            { name: "Paracetamol 650mg Strips", dept: "Medical", aisle: "Aisle 5A", bay: "Bay 1", shelf: "Top Shelf", img: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=200&auto=format&fit=crop&q=80", type: "medical" }
         ];
+
+        // Generate 1000+ Items Database Programmatically
+        const catalogMasterDB = [];
+        let idCounter = 1;
+
+        const variantMap = {
+            "fluid-small": [
+                { label: '250ml', price: 18 }, { label: '500ml (1/2L)', price: 32 }, { label: '1L', price: 60 }, { label: '2L', price: 115 }
+            ],
+            "fluid-vinegar": [
+                { label: '250ml', price: 145 }, { label: '500ml', price: 270 }, { label: '1L', price: 490 }
+            ],
+            "oil": [
+                { label: '500ml Pouch', price: 95 }, { label: '1L Pouch', price: 180 }, { label: '5L Can', price: 850 }
+            ],
+            "bulk-kg": [
+                { label: '1kg Pack', price: 65 }, { label: '5kg Bag', price: 310 }, { label: '10kg Bag', price: 590 }
+            ],
+            "grams": [
+                { label: '100g Pack', price: 45 }, { label: '250g Pack', price: 110 }, { label: '500g Pack', price: 210 }
+            ],
+            "snacks": [
+                { label: '100g Pack', price: 25 }, { label: '250g Pack', price: 60 }, { label: '500g Pack', price: 115 }
+            ],
+            "sweets": [
+                { label: '250g Box', price: 150 }, { label: '500g Box', price: 280 }, { label: '1kg Box', price: 520 }
+            ],
+            "medical": [
+                { label: 'Strip of 10', price: 30 }, { label: 'Strip of 15', price: 45 }
+            ],
+            "standard": [
+                { label: 'Standard Pack', price: 85 }, { label: 'Value Family Pack', price: 160 }
+            ]
+        };
+
+        const brands = ["Heritage", "Aachi", "Tata Simply", "Fortune", "Amul", "Dabur", "MTR", "Saffola", "Dettol", "Himalaya"];
+
+        // Build 1000 items
+        for (let i = 0; i < 70; i++) {
+            baseCatalogTemplates.forEach(template => {
+                const brand = brands[i % brands.length];
+                const variantType = variantMap[template.type] || variantMap["standard"];
+                const basePrice = variantType[0].price;
+
+                catalogMasterDB.push({
+                    id: `p${idCounter++}`,
+                    name: `${brand} ${template.name} #${i + 1}`,
+                    dept: template.dept,
+                    aisle: template.aisle,
+                    bay: template.bay,
+                    shelf: template.shelf,
+                    image: template.img,
+                    variants: variantType,
+                    storePrices: [
+                        { store: 'Main Street Supercenter', price: basePrice, stock: 'In Stock' },
+                        { store: 'Saravana Stores', price: Math.max(10, basePrice - 2), stock: 'In Stock' },
+                        { store: 'Nilgiris Supermarket', price: basePrice + 3, stock: 'Low Stock' },
+                        { store: 'City Fresh Market', price: basePrice - 1, stock: 'In Stock' }
+                    ]
+                });
+            });
+        }
 
         // Global State
         let currentLang = 'en';
@@ -966,7 +895,6 @@
             showScreen('screen-browse-catalog');
         }
 
-        // Toggle Price Comparison Drawer
         function togglePriceCompareDrawer(itemId) {
             const drawer = document.getElementById(`compare-drawer-${itemId}`);
             if (drawer) {
@@ -974,7 +902,6 @@
             }
         }
 
-        // Filter Categories for Search
         function filterHomeCategory(cat) {
             selectedHomeCategory = cat;
             document.querySelectorAll('.hcat-btn').forEach(btn => {
@@ -989,7 +916,6 @@
             renderHomeSearchResults();
         }
 
-        // Render Search Results with Price Compare Toggle
         function renderHomeSearchResults() {
             const query = document.getElementById('home-product-search').value.toLowerCase().trim();
             const container = document.getElementById('home-search-results');
@@ -999,7 +925,7 @@
                 const matchCat = (selectedHomeCategory === 'All' || item.dept === selectedHomeCategory);
                 const matchQuery = item.name.toLowerCase().includes(query) || item.dept.toLowerCase().includes(query);
                 return matchCat && matchQuery;
-            });
+            }).slice(0, 40); // Performance optimized view render
 
             container.innerHTML = filtered.map(item => `
                 <div class="bg-white rounded-3xl p-3.5 border border-gray-200 shadow-sm space-y-3">
@@ -1017,26 +943,24 @@
                         </div>
                     </div>
 
-                    <!-- Size Variant Buttons -->
+                    <!-- Size Variant Chips -->
                     <div class="pt-2 border-t border-gray-100 flex items-center justify-between">
                         <span class="text-[10px] font-bold text-gray-500">Size:</span>
-                        <div class="flex space-x-1">
+                        <div class="flex space-x-1 overflow-x-auto no-scrollbar">
                             ${item.variants.map(v => `
                                 <button onclick="addItemToList('${item.name} (${v.label})', '${v.label}', '${item.aisle}', '${item.bay}', '${item.shelf}', ${v.price}, '${item.image}')" 
-                                    class="px-2 py-1 bg-gray-50 hover:bg-walmart-yellow border border-gray-200 rounded-lg text-[10px] font-bold text-walmart-navy transition-all">
+                                    class="px-2 py-1 bg-gray-50 hover:bg-walmart-yellow border border-gray-200 rounded-lg text-[10px] font-bold text-walmart-navy shrink-0 transition-all">
                                     ${v.label} (₹${v.price})
                                 </button>
                             `).join('')}
                         </div>
                     </div>
 
-                    <!-- Price Comparison Accordion Button -->
                     <button onclick="togglePriceCompareDrawer('${item.id}')" class="w-full bg-blue-50/80 hover:bg-blue-100/80 text-walmart-blue text-[10px] font-extrabold py-1.5 px-3 rounded-xl border border-blue-200 flex items-center justify-between transition-all">
                         <span><i class="fa-solid fa-scale-balanced mr-1.5"></i>Compare Store Prices</span>
                         <i class="fa-solid fa-chevron-down"></i>
                     </button>
 
-                    <!-- Price Comparison Drawer -->
                     <div id="compare-drawer-${item.id}" class="hidden bg-gray-50 p-2.5 rounded-2xl border border-gray-200 space-y-1.5 text-[10px]">
                         <p class="font-extrabold text-walmart-navy uppercase tracking-wider text-[9px]">Live Nearby Price Matching:</p>
                         ${item.storePrices.map(sp => `
@@ -1056,7 +980,6 @@
             `).join('');
         }
 
-        // Add Item to Shopping List
         function addItemToList(name, variant, aisle, bay, shelf, price, image) {
             userShoppingList.push({
                 id: Date.now().toString(),
@@ -1135,7 +1058,6 @@
             `).join('');
         }
 
-        // Browse Catalog
         function filterBrowseCategory(cat) {
             selectedBrowseCategory = cat;
             document.querySelectorAll('.bcat-btn').forEach(btn => {
@@ -1159,7 +1081,7 @@
                 const matchCat = (selectedBrowseCategory === 'All' || item.dept === selectedBrowseCategory);
                 const matchQuery = item.name.toLowerCase().includes(query) || item.dept.toLowerCase().includes(query);
                 return matchCat && matchQuery;
-            });
+            }).slice(0, 40);
 
             container.innerHTML = filtered.map(item => `
                 <div class="bg-white p-3.5 rounded-3xl border border-gray-200 shadow-sm flex items-center justify-between">
