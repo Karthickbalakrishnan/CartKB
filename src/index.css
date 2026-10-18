@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root{
+  --walmart-blue: #0071DC;
+  --walmart-navy: #041E42;
+  --walmart-yellow: #FFC220;
+  --walmart-bg: #F2F8FD;
+}
+
+body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial}
