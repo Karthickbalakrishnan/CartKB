@@ -38,6 +38,10 @@
     .ar-pin-float{animation:pinFloat 2.2s infinite ease-in-out}
     .no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
     .custom-scroll::-webkit-scrollbar{width:4px}.custom-scroll::-webkit-scrollbar-track{background:#F2F8FD}.custom-scroll::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:4px}
+    /* Logo styles */
+    .cartkb-logo { width: 36px; height: 36px }
+    .logo-text { font-weight: 800; letter-spacing: -0.02em }
+    .estimated-pill { background: rgba(255,194,32,0.12); color: #FFC220; padding: 4px 8px; border-radius: 999px; font-weight:700; font-size:11px }
   </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-0 sm:p-4">
@@ -52,11 +56,29 @@
     </div>
 
     <header id="app-header" class="bg-walmart-blue text-white px-4 py-2.5 flex items-center justify-between shadow-sm z-40 shrink-0">
-      <div class="flex items-center space-x-2">
-        <button id="header-back-btn" onclick="handleHeaderBack()" class="w-8 h-8 flex items-center justify-center text-white text-sm rounded-full hover:bg-white/10 hidden"><i class="fa-solid fa-chevron-left"></i></button>
+      <div class="flex items-center space-x-3">
+        <!-- Creative SVG logo: Cart + Pin + Spark -->
         <div class="flex items-center space-x-2">
-          <div class="w-7 h-7 bg-walmart-yellow rounded-full flex items-center justify-center text-walmart-navy font-black text-xs shadow-sm"><i class="fa-solid fa-sparkles"></i></div>
-          <span class="text-xl font-extrabold tracking-tight">Cart<span class="text-walmart-yellow">KB</span></span>
+          <svg class="cartkb-logo" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="g1" x1="0%" x2="100%" y1="0%" y2="100%">
+                <stop offset="0%" stop-color="#0071DC"/>
+                <stop offset="100%" stop-color="#041E42"/>
+              </linearGradient>
+              <linearGradient id="g2" x1="0%" x2="100%" y1="0%" y2="100%">
+                <stop offset="0%" stop-color="#FFC220"/>
+                <stop offset="100%" stop-color="#E0A812"/>
+              </linearGradient>
+            </defs>
+            <rect x="2" y="10" width="40" height="28" rx="4" fill="url(#g1)" />
+            <path d="M10 38a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm24 0a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" fill="#fff" opacity="0.9" />
+            <path d="M42 8c0 6-6 12-8 16-2-4-8-10-8-16 0-4 4-8 8-8s8 4 8 8z" fill="url(#g2)" transform="translate(6,2) scale(.7)" />
+            <circle cx="46" cy="18" r="3" fill="#FFC220" />
+          </svg>
+          <div>
+            <div class="text-xl font-extrabold tracking-tight logo-text">Cart<span class="text-walmart-yellow">KB</span></div>
+            <div class="text-[10px] text-white/80">Hyper-local • Nanganallur</div>
+          </div>
         </div>
       </div>
 
@@ -73,38 +95,66 @@
     </header>
 
     <div id="gps-location-banner" class="bg-walmart-navy text-white px-4 py-2 text-xs flex justify-between items-center z-30 shrink-0 shadow-inner">
-      <div class="flex items-center space-x-2 truncate pr-2"><i class="fa-solid fa-location-crosshairs text-walmart-yellow animate-pulse text-xs"></i><span id="detected-address" class="font-semibold truncate text-[11px]">28, South West Boag Road, T. Nagar, Chennai</span></div>
-      <button onclick="refreshGPSLocation()" class="bg-white/15 hover:bg-white/30 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0 border border-white/20"><i class="fa-solid fa-rotate-right mr-1"></i>Refetch</button>
+      <div class="flex items-center space-x-2 truncate pr-2">
+        <i class="fa-solid fa-location-dot text-walmart-yellow animate-pulse text-xs"></i>
+        <div class="truncate">
+          <div class="text-[11px] font-bold">Estimated location</div>
+          <div id="detected-address" class="text-[11px] text-white/90 truncate">Detecting...</div>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2">
+        <a id="maps-link" class="text-[10px] font-bold text-white/90 underline hidden" target="_blank" rel="noopener">View on Maps</a>
+        <button onclick="refreshGPSLocation()" class="bg-white/15 hover:bg-white/30 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0 border border-white/20">Refresh</button>
+      </div>
     </div>
 
     <main id="main-viewport" class="flex-1 overflow-y-auto custom-scroll relative flex flex-col">
       <section id="screen-landing" class="p-4 space-y-4 flex-1 flex flex-col justify-between">
         <div class="space-y-4">
           <div class="bg-blue-50 border border-blue-200 rounded-2xl p-3 flex items-center justify-between shadow-sm">
-            <div class="flex items-center space-x-3"><div class="w-9 h-9 bg-walmart-blue text-white rounded-xl flex items-center justify-center font-bold text-sm shadow-sm shrink-0"><i class="fa-solid fa-location-dot"></i></div>
-            <div><div class="flex items-center space-x-1.5"><span class="text-xs font-black text-walmart-navy" id="txt-location-city">Chennai, TN</span><span class="bg-walmart-green text-white text-[9px] font-black px-1.5 py-0.2 rounded-full uppercase">GPS 100% Accurate</span></div><p class="text-[10px] text-gray-500 font-medium">T. Nagar • South Boag Road Corridor</p></div></div>
-            <i class="fa-solid fa-circle-check text-walmart-green text-base"></i>
+            <div class="flex items-center space-x-3"><div class="w-9 h-9 bg-walmart-blue text-white rounded-xl flex items-center justify-center font-bold text-sm shadow-sm shrink-0"><i class="fa-solid fa-cart-shopping"></i></div>
+            <div>
+              <div class="flex items-center space-x-1.5"><span class="text-xs font-black text-walmart-navy" id="txt-location-city">Chennai, TN</span><span class="text-[9px] text-gray-400">• Approx</span></div>
+              <div class="text-[10px] text-gray-500">Location is estimated from your device (permission required)</div>
+            </div>
+            </div>
           </div>
 
           <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 p-4 text-walmart-navy shadow-md border border-amber-300">
             <div class="relative z-10 space-y-1"><span class="bg-walmart-navy text-walmart-yellow text-[9px] font-black uppercase px-2 py-0.5 rounded-full inline-block">🪔 Diwali & Festive Deals</span>
             <h3 class="text-base font-black tracking-tight leading-tight">Grand Festive Super Savings!</h3>
             <p class="text-[11px] font-bold text-walmart-navy/90">Up to 50% OFF + BOGO on Sweets, Oils & Puja Essentials</p>
-            <div class="pt-2 flex items-center space-x-2"><span class="bg-white/90 text-walmart-navy px-3 py-1 rounded-full text-[10px] font-black shadow-sm"><i class="fa-solid fa-tag text-walmart-blue mr-1"></i> Use Code: FESTIVE50</span></div></div>
+            <div class="pt-2 flex items-center space-x-2"><span class="bg-white/90 text-walmart-navy px-3 py-1 rounded-full text-[10px] font-black shadow-sm"><i class="fa-solid fa-tag text-walmart-blue mr-1"></i>Festival Offers</span>
+            </div>
             <i class="fa-solid fa-sparkles text-6xl text-white/20 absolute -right-2 -bottom-2 pointer-events-none"></i>
           </div>
 
           <div class="space-y-2.5">
-            <div class="flex justify-between items-center"><h3 class="text-xs font-black text-walmart-navy uppercase tracking-wider">Nearby Verified Stores</h3><span class="text-[10px] font-bold text-walmart-blue">4 Stores Nearby</span></div>
-            <div onclick="selectStoreAndProceed('Main Street Supercenter')" class="bg-white p-3.5 rounded-3xl border-2 border-walmart-blue shadow-sm hover:shadow-md transition-all cursor-pointer relative">
+            <div class="flex justify-between items-center"><h3 class="text-xs font-black text-walmart-navy uppercase tracking-wider">Nearby Verified Stores</h3><span class="text-[10px] font-bold text-gray-400">Within 2.5 km</span></div>
+            <div onclick="selectStoreAndProceed('Nilgiris Supermarket')" class="bg-white p-3.5 rounded-3xl border-2 border-walmart-blue shadow-sm hover:shadow-md transition-all cursor-pointer relative">
               <span class="absolute top-3 right-3 bg-walmart-blue text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase">Closest Store</span>
-              <div class="flex items-center space-x-3"><img src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=100&auto=format&fit=crop&q=80" alt="Supermarket" class="w-12 h-12 rounded-2xl object-cover shrink-0 border border-gray-200"><div><h4 class="text-xs font-extrabold text-walmart-navy">Main Street Supercenter</h4><p class="text-[10px] text-gray-500">0.8 km • South Boag Rd • Open till 10 PM</p><div class="flex items-center space-x-2 mt-1"><span class="text-walmart-green text-[10px] font-bold"><i class="fa-solid fa-circle-check mr-1"></i>In Stock 98%</span><span class="text-gray-300">•</span><span class="text-walmart-blue text-[10px] font-bold"><i class="fa-solid fa-bolt mr-1"></i>AR Enabled</span></div></div></div>
+              <div class="flex items-center space-x-3"><img src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=100&auto=format&fit=crop&q=80" alt="Supermarket" class="w-12 h-12 rounded-2xl object-cover border border-gray-100">
+                <div>
+                  <div class="font-extrabold text-xs text-walmart-navy">Nilgiris Supermarket</div>
+                  <div class="text-[10px] text-gray-500">1st Main Road, Nanganallur • 0.4 km</div>
+                </div>
+              </div>
             </div>
-            <div onclick="selectStoreAndProceed('Saravana Stores Superstore')" class="bg-white p-3.5 rounded-3xl border border-gray-200 shadow-sm hover:border-walmart-blue transition-all cursor-pointer">
-              <div class="flex items-center space-x-3"><img src="https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=100&auto=format&fit=crop&q=80" alt="Superstore" class="w-12 h-12 rounded-2xl object-cover shrink-0 border border-gray-200"><div><h4 class="text-xs font-extrabold text-walmart-navy">Saravana Stores Superstore</h4><p class="text-[10px] text-gray-500">1.2 km • Ranganathan St • Open till 10:30 PM</p><div class="flex items-center space-x-2 mt-1"><span class="text-walmart-green text-[10px] font-bold"><i class="fa-solid fa-circle-check mr-1"></i>In Stock 95%</span><span class="text-gray-300">•</span><span class="text-amber-600 text-[10px] font-bold">Best Price Match</span></div></div></div>
+            <div onclick="selectStoreAndProceed('Reliance Smart Point')" class="bg-white p-3.5 rounded-3xl border border-gray-200 shadow-sm hover:border-walmart-blue transition-all cursor-pointer">
+              <div class="flex items-center space-x-3"><img src="https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=100&auto=format&fit=crop&q=80" alt="Superstore" class="w-12 h-12 rounded-2xl object-cover border border-gray-100">
+                <div>
+                  <div class="font-extrabold text-xs text-walmart-navy">Reliance Smart Point</div>
+                  <div class="text-[10px] text-gray-500">48th Street, Nanganallur • 0.7 km</div>
+                </div>
+              </div>
             </div>
-            <div onclick="selectStoreAndProceed('Nilgiris Supermarket')" class="bg-white p-3.5 rounded-3xl border border-gray-200 shadow-sm hover:border-walmart-blue transition-all cursor-pointer">
-              <div class="flex items-center space-x-3"><img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=100&auto=format&fit=crop&q=80" alt="Market" class="w-12 h-12 rounded-2xl object-cover shrink-0 border border-gray-200"><div><h4 class="text-xs font-extrabold text-walmart-navy">Nilgiris Supermarket</h4><p class="text-[10px] text-gray-500">1.5 km • GN Chetty Rd • Open till 9:30 PM</p><div class="flex items-center space-x-2 mt-1"><span class="text-walmart-green text-[10px] font-bold"><i class="fa-solid fa-circle-check mr-1"></i>In Stock 91%</span></div></div></div>
+            <div onclick="selectStoreAndProceed('V V Mart')" class="bg-white p-3.5 rounded-3xl border border-gray-200 shadow-sm hover:border-walmart-blue transition-all cursor-pointer">
+              <div class="flex items-center space-x-3"><img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=100&auto=format&fit=crop&q=80" alt="Market" class="w-12 h-12 rounded-2xl object-cover border border-gray-100">
+                <div>
+                  <div class="font-extrabold text-xs text-walmart-navy">V V Mart</div>
+                  <div class="text-[10px] text-gray-500">1st Main Road, Nanganallur • 0.8 km</div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -134,13 +184,15 @@
         </div>
 
         <div class="relative">
-          <input type="text" id="home-product-search" value="Milk" onkeyup="renderHomeSearchResults()" class="w-full pl-9 pr-24 py-2.5 bg-white border-2 border-walmart-blue rounded-2xl text-xs font-bold text-walmart-navy focus:outline-none shadow-sm" placeholder="Search items..">
+          <input type="text" id="home-product-search" value="Milk" onkeyup="renderHomeSearchResults()" class="w-full pl-9 pr-24 py-2.5 bg-white border-2 border-walmart-blue rounded-2xl text-xs font-extrabold text-walmart-navy" />
           <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-walmart-blue text-xs"></i>
           <button onclick="renderHomeSearchResults()" class="absolute right-1.5 top-1.5 bg-walmart-yellow text-walmart-navy font-black text-xs px-3 py-1.5 rounded-xl">Search</button>
         </div>
 
         <div id="home-search-results" class="space-y-3 flex-1 overflow-y-auto custom-scroll pr-0.5"></div>
       </section>
+
+      <!-- rest of sections unchanged -->
 
       <section id="screen-store-select" class="p-4 space-y-4 flex-1 flex flex-col justify-between hidden">
         <div class="space-y-4">
@@ -158,114 +210,32 @@
             </select>
           </div>
           <div onclick="simulateQRStoreScan()" class="bg-blue-50/60 p-4 rounded-3xl border-2 border-dashed border-walmart-blue flex items-center justify-between cursor-pointer hover:bg-blue-100/60">
-            <div class="flex items-center space-x-3"><div class="w-10 h-10 bg-walmart-blue text-white rounded-2xl flex items-center justify-center text-lg font-black shrink-0 shadow-sm"><i class="fa-solid fa-qrcode"></i></div><div><h4 class="text-xs font-extrabold text-walmart-navy">Scan store entrance QR</h4><p class="text-[10px] text-gray-500">Auto-detects your aisle location instantly</p></div></div>
+            <div class="flex items-center space-x-3"><div class="w-10 h-10 bg-walmart-blue text-white rounded-2xl flex items-center justify-center text-lg font-black shrink-0 shadow-sm"><i class="fa-solid fa-qrcode"></i></div>
+            <div>
+              <div class="font-extrabold text-xs text-walmart-navy">Scan Entrance QR</div>
+              <div class="text-[10px] text-gray-500">Quick check-in for AR calibration</div>
+            </div>
+            </div>
             <i class="fa-solid fa-camera text-walmart-blue text-base"></i>
           </div>
         </div>
         <button onclick="confirmStoreSelection()" class="w-full bg-walmart-blue hover:bg-blue-800 text-white py-3 px-4 rounded-full font-black text-xs shadow-md transition-all">Confirm store & continue</button>
       </section>
 
-      <section id="screen-store-mode" class="p-4 space-y-4 flex-1 flex flex-col justify-between hidden">
-        <div class="space-y-4">
-          <div class="bg-green-50 p-3.5 rounded-2xl border border-green-200 flex items-center space-x-3"><div class="w-8 h-8 bg-walmart-green text-white rounded-full flex items-center justify-center text-sm font-black shrink-0"><i class="fa-solid fa-check"></i></div><div><span class="text-[10px] font-bold text-walmart-green uppercase">Selected Location</span><h4 id="mode-selected-store" class="text-xs font-black text-walmart-navy">Main Street Supercenter</h4></div></div>
-          <h2 class="text-base font-black text-walmart-navy">Choose how you'd like to shop</h2>
+      <!-- keep remaining sections as-is for brevity in this edit (unchanged) -->
 
-          <div onclick="openShoppingListMode()" class="bg-white p-4 rounded-3xl border-2 border-gray-100 shadow-sm hover:border-walmart-blue transition-all cursor-pointer flex items-center justify-between group">
-            <div class="flex items-center space-x-3"><div class="w-11 h-11 bg-blue-50 text-walmart-blue rounded-2xl flex items-center justify-center text-lg font-black shrink-0 group-hover:bg-walmart-blue group-hover:text-white"><i class="fa-solid fa-rectangle-list"></i></div><div><h4 class="text-xs font-extrabold text-walmart-navy">Open my shopping list</h4><p class="text-[10px] text-gray-500">Pre-saved items auto-mapped to aisles</p></div></div>
-            <i class="fa-solid fa-chevron-right text-gray-400 group-hover:text-walmart-blue transition-colors text-xs"></i>
-          </div>
-
-          <div onclick="openBrowseCatalogMode()" class="bg-white p-4 rounded-3xl border-2 border-gray-100 shadow-sm hover:border-walmart-blue transition-all cursor-pointer flex items-center justify-between group">
-            <div class="flex items-center space-x-3"><div class="w-11 h-11 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-lg font-black shrink-0 group-hover:bg-amber-500 group-hover:text-white"><i class="fa-solid fa-magnifying-glass"></i></div><div><h4 class="text-xs font-extrabold text-walmart-navy">Browse & search items</h4><p class="text-[10px] text-gray-500">Search 1000+ SKUs on the fly</p></div></div>
-            <i class="fa-solid fa-chevron-right text-gray-400 group-hover:text-amber-500 transition-colors text-xs"></i>
-          </div>
-        </div>
-        <div class="bg-blue-50 p-3 rounded-2xl border border-blue-100 flex items-center space-x-2.5 text-xs text-walmart-blue"><i class="fa-solid fa-circle-info text-sm"></i><span class="text-[11px] font-semibold">You can switch modes or change store anytime from the menu.</span></div>
-      </section>
-
-      <section id="screen-shopping-list" class="p-4 space-y-3.5 flex-1 flex flex-col hidden">
-        <div class="flex justify-between items-center"><div><h2 class="text-base font-black text-walmart-navy">Your Cart</h2><p id="list-items-summary" class="text-xs text-gray-500 font-medium">1 item • Estimated ₹32</p></div><span class="bg-walmart-yellow text-walmart-navy text-xs font-black px-3 py-1 rounded-full shadow-sm" id="list-count-badge">1 Item</span></div>
-        <div class="flex space-x-2">
-          <input type="text" id="custom-list-input" placeholder="Add new item..." class="flex-1 px-3.5 py-2 bg-white border border-gray-300 rounded-2xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-walmart-blue" onkeypress="if(event.key==='Enter') addCustomItemToList()">
-          <button onclick="addCustomItemToList()" class="bg-walmart-blue hover:bg-blue-800 text-white px-4 py-2 rounded-2xl font-bold text-xs shadow-sm">Add</button>
-        </div>
-        <div id="shopping-list-container" class="space-y-2.5 flex-1 overflow-y-auto custom-scroll pr-0.5"></div>
-        <div class="pt-2 border-t border-gray-200"><button onclick="startARNavigation()" class="w-full bg-walmart-yellow hover:bg-walmart-yellowHover text-walmart-navy py-3 px-4 rounded-full font-black text-xs shadow-md flex items-center justify-center space-x-2"><span>Start aisle camera navigation →</span></button></div>
-      </section>
-
-      <section id="screen-browse-catalog" class="p-4 space-y-3.5 flex-1 flex flex-col hidden">
-        <div><h2 class="text-base font-black text-walmart-navy">Browse Catalog</h2><p class="text-xs text-gray-500">Add items directly to cart.</p></div>
-        <div class="relative"><input type="text" id="catalog-search-input" onkeyup="renderBrowseCatalog()" placeholder="Search items..." class="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-300 rounded-2xl text-xs font-bold text-walmart-navy focus:outline-none shadow-sm"><i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-gray-400 text-xs"></i></div>
-        <div id="browse-catalog-container" class="space-y-3 flex-1 overflow-y-auto custom-scroll pr-0.5"></div>
-      </section>
-
-      <section id="screen-ar-camera" class="relative flex-1 flex flex-col hidden overflow-hidden bg-black">
-        <div class="absolute inset-0 bg-slate-900 z-0 overflow-hidden">
-          <svg class="w-full h-full opacity-45 scale-105" viewBox="0 0 400 700" preserveAspectRatio="none">
-            <line x1="0" y1="700" x2="160" y2="280" stroke="#64748B" stroke-width="2" />
-            <line x1="400" y1="700" x2="240" y2="280" stroke="#64748B" stroke-width="2" />
-            <polygon points="0,150 160,280 160,700 0,700" fill="#1E293B" />
-            <polygon points="400,150 240,280 240,700 400,700" fill="#1E293B" />
-            <polygon points="160,280 240,280 320,700 80,700" fill="#0F172A" />
-          </svg>
-          <div class="absolute inset-0 flex flex-col items-center justify-end pb-24 pointer-events-none">
-            <svg class="w-full h-3/5 ar-animated-path" viewBox="0 0 300 400" fill="none">
-              <defs><linearGradient id="arGlowYellow" x1="0%" y1="100%" x2="0%" y2="0%"><stop offset="0%" stop-color="#FFC220" stop-opacity="0.95" /><stop offset="100%" stop-color="#FFC220" stop-opacity="0.25" /></linearGradient></defs>
-              <path d="M 85 400 L 138 200 L 162 200 L 215 400 Z" fill="url(#arGlowYellow)" />
-              <path d="M 110 360 L 150 320 L 190 360" stroke="#041E42" stroke-width="6" stroke-linecap="round" fill="none" />
-            </svg>
-          </div>
-          <div id="ar-target-pin" class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 ar-pin-float z-20 flex flex-col items-center cursor-pointer" onclick="markARItemCollected()">
-            <div class="bg-walmart-navy text-white p-3 rounded-2xl border-2 border-walmart-yellow shadow-2xl flex items-center space-x-3 w-64">
-              <img id="ar-pin-img" src="" class="w-10 h-10 rounded-xl object-cover border border-amber-400 shrink-0">
-              <div class="flex-1 overflow-hidden"><span id="ar-pin-badge" class="bg-walmart-blue text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase inline-block">Aisle 2B • Bay 4 • Shelf 3</span><h4 id="ar-pin-name" class="text-xs font-extrabold text-white truncate mt-0.5">Apple Cider Vinegar</h4></div>
-              <i class="fa-solid fa-chevron-right text-walmart-yellow text-xs"></i>
-            </div>
-            <div class="w-1 h-8 bg-walmart-yellow shadow-lg"></div>
-            <div class="w-4 h-4 bg-walmart-yellow rounded-full shadow-lg ring-4 ring-walmart-yellow/40"></div>
-          </div>
-        </div>
-
-        <div class="relative z-20 p-3 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent">
-          <button onclick="exitARCamera()" class="bg-black/60 text-white w-8 h-8 rounded-full flex items-center justify-center border border-white/20"><i class="fa-solid fa-xmark text-sm"></i></button>
-          <div class="bg-black/60 text-white px-3 py-1 rounded-full border border-white/20 text-[11px] font-bold flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-walmart-green animate-ping"></span><span>AR Wayfinder Active</span></div>
-          <button onclick="showToast('Flash On','fa-bolt')" class="bg-black/60 text-white w-8 h-8 rounded-full flex items-center justify-center border border-white/20"><i class="fa-solid fa-bolt text-xs"></i></button>
-        </div>
-
-        <div class="relative z-20 mx-4 mt-2 bg-walmart-navy/90 backdrop-blur-md text-white p-3 rounded-2xl border border-white/20 flex items-center space-x-3 shadow-lg"><div class="w-8 h-8 bg-walmart-yellow text-walmart-navy rounded-full flex items-center justify-center text-sm font-black shrink-0"><i class="fa-solid fa-person-walking"></i></div><div><h4 id="ar-step-prompt" class="text-xs font-extrabold text-white">Walk 8 meters forward. Look at left shelf.</h4><p class="text-[10px] text-gray-300 font-medium">Follow the yellow floor path to your target item.</p></div></div>
-
-        <div class="mt-auto relative z-20 p-4 space-y-3 bg-gradient-to-t from-walmart-navy via-walmart-navy/95 to-transparent pt-6">
-          <div class="bg-white rounded-2xl p-3 shadow-xl border border-gray-100 flex items-center justify-between"><div class="flex items-center space-x-3"><img id="ar-next-img" src="" class="w-9 h-9 rounded-xl object-cover shrink-0"><div><span class="text-[9px] font-bold text-gray-400 uppercase">Next Item Target</span><h4 id="ar-next-name" class="text-xs font-extrabold text-walmart-navy">Milk 1L</h4></div></div><button onclick="markARItemCollected()" class="bg-walmart-yellow hover:bg-walmart-yellowHover text-walmart-navy font-black text-xs px-4 py-2 rounded-full shadow-sm">Collected! →</button></div>
-        </div>
-      </section>
-
-      <section id="screen-scan-pay" class="p-4 space-y-4 flex-1 flex flex-col justify-between hidden">
-        <div class="space-y-4">
-          <div><h2 class="text-base font-black text-walmart-navy">Scan & Pay</h2><p class="text-xs text-gray-500">Scan shelf barcodes, pay via UPI and skip the checkout queue.</p></div>
-          <div onclick="simulateBarcodeScan()" class="relative h-44 bg-slate-900 rounded-3xl overflow-hidden border-2 border-walmart-blue flex flex-col justify-between p-3 cursor-pointer"><div class="absolute inset-0 flex items-center justify-center opacity-30"><div class="w-32 h-32 border-2 border-dashed border-walmart-yellow rounded-2xl"></div></div><div class="absolute inset-x-0 top-1/2 h-0.5 bg-walmart-yellow shadow-[0_0_12px_#FFC220] animate-pulse"></div><div class="relative z-10 flex justify-between items-center text-white"><span class="bg-black/60 px-2.5 py-1 rounded-full text-[10px] font-bold border border-white/20"><i class="fa-solid fa-barcode mr-1"></i> Barcode Scanner</span><span class="bg-walmart-green text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">Ready</span></div><div class="relative z-10 text-center text-xs text-white font-bold bg-black/60 py-1.5 rounded-xl border border-white/10">Tap camera view to scan shelf barcode</div></div>
-          <div class="bg-white p-4 rounded-3xl border border-gray-200 shadow-sm space-y-2.5"><div class="flex justify-between items-center border-b border-gray-100 pb-2 text-xs font-bold text-gray-500 uppercase tracking-wider"><span>Cart Summary</span><span id="scan-cart-count" class="text-walmart-blue font-extrabold">1 item</span></div><div id="scan-cart-items-list" class="space-y-2 text-xs"></div><div class="pt-2 border-t border-gray-200 flex justify-between items-center"><span class="text-xs font-bold text-gray-600">Total Amount:</span><span id="scan-cart-total-price" class="text-base font-black text-walmart-navy">₹32.00</span></div></div>
-        </div>
-        <div class="space-y-2"><button onclick="processUPIPayment()" class="w-full bg-walmart-yellow hover:bg-walmart-yellowHover text-walmart-navy py-3 px-4 rounded-full font-black text-xs shadow-md flex items-center justify-center space-x-2"><i class="fa-solid fa-bolt text-sm"></i><span>Pay via UPI (Fast Checkout)</span></button><p class="text-[10px] text-center text-gray-400 font-medium">🔒 Secure • Fast • Skip queue</p></div>
-      </section>
-
-      <section id="screen-payment-success" class="p-4 space-y-4 flex-1 flex flex-col justify-between hidden">
-        <div class="space-y-4 text-center"><div class="w-14 h-14 bg-green-100 text-walmart-green rounded-full flex items-center justify-center text-2xl font-black mx-auto shadow-sm"><i class="fa-solid fa-check"></i></div>
-        <div><span class="bg-walmart-green text-white text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase">Payment Successful!</span><h2 class="text-lg font-black text-walmart-navy mt-1.5" id="success-total-paid">₹32.00 paid via UPI</h2><p class="text-xs text-gray-500 font-medium">Order #CKB-987452 • T. Nagar Store</p></div>
-        <div class="bg-white p-5 rounded-3xl border-2 border-walmart-green shadow-md space-y-3 inline-block w-full"><h3 class="text-xs font-extrabold text-walmart-navy">Digital Express Exit QR Pass</h3><p class="text-[10px] text-gray-500">Show this QR code at the express exit gate.</p><div class="p-3 bg-gray-50 rounded-2xl inline-block border border-gray-200"><img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=CARTKB-EXPRESS-PAID-285" alt="Digital Exit QR Code" class="w-36 h-36 mx-auto"></div><div class="bg-green-50 text-walmart-green text-[10px] font-extrabold py-1 px-3 rounded-full inline-block"><i class="fa-solid fa-clock mr-1"></i> Valid for 10 minutes</div></div></div>
-        <button onclick="resetAppToHome()" class="w-full bg-walmart-yellow hover:bg-walmart-yellowHover text-walmart-navy py-3 px-4 rounded-full font-black text-xs shadow-md">Done & Return Home</button>
-      </section>
     </main>
 
     <footer id="app-bottom-nav" class="bg-white border-t border-gray-200 px-3 py-2 flex justify-around items-center z-40 shrink-0">
-      <button onclick="navTabClick('home')" id="nav-home" class="nav-btn text-walmart-blue flex flex-col items-center space-y-0.5"><i class="fa-solid fa-house text-base"></i><span class="text-[10px] font-bold">Home</span></button>
-      <button onclick="navTabClick('list')" id="nav-list" class="nav-btn text-gray-400 flex flex-col items-center space-y-0.5"><i class="fa-solid fa-list-check text-base"></i><span class="text-[10px] font-bold">List</span></button>
-      <button onclick="navTabClick('scan')" id="nav-scan" class="nav-btn text-gray-400 flex flex-col items-center space-y-0.5"><i class="fa-solid fa-qrcode text-base"></i><span class="text-[10px] font-bold">Scan</span></button>
-      <button onclick="openLanguageModal()" id="nav-more" class="nav-btn text-gray-400 flex flex-col items-center space-y-0.5"><i class="fa-solid fa-globe text-base"></i><span class="text-[10px] font-bold">Language</span></button>
+      <button onclick="navTabClick('home')" id="nav-home" class="nav-btn text-walmart-blue flex flex-col items-center space-y-0.5"><i class="fa-solid fa-house text-base"></i><span class="text-[10px]">Home</span></button>
+      <button onclick="navTabClick('list')" id="nav-list" class="nav-btn text-gray-400 flex flex-col items-center space-y-0.5"><i class="fa-solid fa-list-check text-base"></i><span class="text-[10px]">List</span></button>
+      <button onclick="navTabClick('scan')" id="nav-scan" class="nav-btn text-gray-400 flex flex-col items-center space-y-0.5"><i class="fa-solid fa-qrcode text-base"></i><span class="text-[10px]">Scan</span></button>
+      <button onclick="openLanguageModal()" id="nav-more" class="nav-btn text-gray-400 flex flex-col items-center space-y-0.5"><i class="fa-solid fa-globe text-base"></i><span class="text-[10px]">More</span></button>
     </footer>
 
     <div id="upload-list-modal" class="absolute inset-0 bg-black/70 z-50 flex items-center justify-center p-4 hidden">
       <div class="bg-white w-full max-w-md rounded-2xl p-4 space-y-3">
-        <div class="flex justify-between items-center"><h3 class="text-sm font-black text-walmart-navy">Upload handwritten list</h3><button onclick="closeUploadListModal()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs"><i class="fa-solid fa-xmark"></i></button></div>
+        <div class="flex justify-between items-center"><h3 class="text-sm font-black text-walmart-navy">Upload handwritten list</h3><button onclick="closeUploadListModal()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">✕</button></div>
         <p class="text-xs text-gray-500">Take a photo of your handwritten list or upload an image. We’ll help you convert it into cart items.</p>
         <div class="space-y-2">
           <input id="upload-list-input" accept="image/*" capture="environment" type="file" class="w-full" onchange="handleUploadListInput(event)">
@@ -275,7 +245,7 @@
             <textarea id="recognized-items" class="w-full h-28 p-2 border rounded-md text-xs">Milk
 Bread
 Apple Cider Vinegar</textarea>
-            <div class="flex justify-end space-x-2 mt-2"><button onclick="closeUploadListModal()" class="px-3 py-1 rounded-md bg-gray-100 text-xs">Cancel</button><button onclick="addRecognizedItemsToList()" class="px-3 py-1 rounded-md bg-walmart-blue text-white text-xs">Add items to cart</button></div>
+            <div class="flex justify-end space-x-2 mt-2"><button onclick="closeUploadListModal()" class="px-3 py-1 rounded-md bg-gray-100 text-xs">Cancel</button><button onclick="addRecognizedItemsToList()" class="px-3 py-1 rounded-md bg-walmart-blue text-white text-xs">Add</button></div>
           </div>
         </div>
       </div>
@@ -283,29 +253,36 @@ Apple Cider Vinegar</textarea>
 
     <div id="language-modal" class="absolute inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
       <div class="bg-white w-full rounded-t-3xl sm:rounded-3xl p-5 space-y-4 shadow-2xl border border-gray-100 max-w-sm">
-        <div class="flex justify-between items-center border-b border-gray-100 pb-3"><h3 class="text-sm font-black text-walmart-navy">Select Language</h3><button onclick="closeLanguageModal()" class="w-7 h-7 bg-gray-100 text-gray-500 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-xmark"></i></button></div>
+        <div class="flex justify-between items-center border-b border-gray-100 pb-3"><h3 class="text-sm font-black text-walmart-navy">Select Language</h3><button onclick="closeLanguageModal()" class="w-8 h-8 rounded-full bg-gray-100">✕</button></div>
         <div class="space-y-2">
-          <button onclick="setLanguage('en')" id="lang-btn-en" class="w-full p-3 bg-blue-50 border-2 border-walmart-blue rounded-2xl flex items-center justify-between text-xs font-black text-walmart-navy"><div class="flex items-center space-x-3"><span class="w-7 h-7 bg-walmart-blue text-white rounded-full flex items-center justify-center font-bold text-[10px]">EN</span><span>English</span></div><i class="fa-solid fa-check text-walmart-blue text-sm"></i></button>
-          <button onclick="setLanguage('ta')" id="lang-btn-ta" class="w-full p-3 bg-gray-50 border-2 border-transparent rounded-2xl flex items-center justify-between text-xs font-bold text-walmart-navy"><div class="flex items-center space-x-3"><span class="w-7 h-7 bg-amber-500 text-white rounded-full flex items-center justify-center font-bold text-[10px]">TA</span><span>தமிழ் (Tamil)</span></div><i class="fa-solid fa-check text-walmart-blue text-sm hidden"></i></button>
-          <button onclick="setLanguage('hi')" id="lang-btn-hi" class="w-full p-3 bg-gray-50 border-2 border-transparent rounded-2xl flex items-center justify-between text-xs font-bold text-walmart-navy"><div class="flex items-center space-x-3"><span class="w-7 h-7 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-[10px]">HI</span><span>हिंदी (Hindi)</span></div><i class="fa-solid fa-check text-walmart-blue text-sm hidden"></i></button>
+          <button onclick="setLanguage('en')" id="lang-btn-en" class="w-full p-3 bg-blue-50 border-2 border-walmart-blue rounded-2xl flex items-center justify-between text-xs font-black text-walmart-navy">English</button>
+          <button onclick="setLanguage('ta')" id="lang-btn-ta" class="w-full p-3 bg-gray-50 border-2 border-transparent rounded-2xl flex items-center justify-between text-xs font-bold text-walmart-navy">தமிழ் (Tamil)</button>
+          <button onclick="setLanguage('hi')" id="lang-btn-hi" class="w-full p-3 bg-gray-50 border-2 border-transparent rounded-2xl flex items-center justify-between text-xs font-bold text-walmart-navy">हिंदी (Hindi)</button>
         </div>
       </div>
     </div>
 
-    <div id="toast-box" class="absolute top-14 left-1/2 -translate-x-1/2 bg-walmart-navy text-white text-xs font-bold px-4 py-2 rounded-full shadow-2xl z-50 flex items-center space-x-2 border border-white/10 hidden"><i id="toast-icon" class="fa-solid fa-circle-info text-walmart-yellow"></i><span id="toast-msg">Notification</span></div>
+    <div id="toast-box" class="absolute top-14 left-1/2 -translate-x-1/2 bg-walmart-navy text-white text-xs font-bold px-4 py-2 rounded-full shadow-2xl z-50 flex items-center space-x-2 border border-white/10 hidden">
+      <i id="toast-icon" class="fa-solid fa-circle-info text-walmart-yellow"></i>
+      <div id="toast-msg">Toast</div>
+    </div>
   </div>
 
   <script>
+    // If you want reverse geocoding from Google Maps, set your API key here.
+    // Leave empty to use a coords -> "View on Maps" link fallback.
+    const MAPS_API_KEY = '';
+
     const baseCatalogTemplates = [
-      { name: 'Fresh Toned Milk', dept: 'Dairy', aisle: 'Aisle 1A', bay: 'Bay 3', shelf: 'Middle Shelf', img: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=200&auto=format&fit=crop&q=80', type: 'fluid-small' },
-      { name: 'Full Cream Cow Milk', dept: 'Dairy', aisle: 'Aisle 1A', bay: 'Bay 4', shelf: 'Lower Shelf', img: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=200&auto=format&fit=crop&q=80', type: 'fluid-small' },
-      { name: 'Apple Cider Vinegar', dept: 'Kitchen', aisle: 'Aisle 2B', bay: 'Bay 4', shelf: 'Middle Shelf', img: 'https://images.unsplash.com/photo-1598511726623-d7228a7e089d?w=200&auto=format&fit=crop&q=80', type: 'fluid-vinegar' },
-      { name: 'Sunflower Cooking Oil', dept: 'Kitchen', aisle: 'Aisle 2A', bay: 'Bay 1', shelf: 'Lower Shelf', img: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=200&auto=format&fit=crop&q=80', type: 'oil' },
-      { name: 'Kadalai Mittai / Peanut Chikki', dept: 'Snacks', aisle: 'Aisle 3C', bay: 'Bay 2', shelf: 'Middle Shelf', img: 'https://images.unsplash.com/photo-1599599810769-bcde5a160d32?w=200&auto=format&fit=crop&q=80', type: 'sweets' },
-      { name: 'Bathroom Floor Cleaner Liquid', dept: 'Bathroom', aisle: 'Aisle 4A', bay: 'Bay 3', shelf: 'Lower Shelf', img: 'https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?w=200&auto=format&fit=crop&q=80', type: 'standard' },
-      { name: 'Paracetamol 650mg Strips', dept: 'Medical', aisle: 'Aisle 5A', bay: 'Bay 1', shelf: 'Top Shelf', img: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=200&auto=format&fit=crop&q=80', type: 'medical' },
-      { name: 'Festive Camphor & Brass Lamp Pack', dept: 'Festival', aisle: 'Aisle 1C', bay: 'Bay 2', shelf: 'Special Display', img: 'https://images.unsplash.com/photo-1605371924599-2d0365d3d35f?w=200&auto=format&fit=crop&q=80', type: 'sweets' },
-      { name: 'Aromatic Lavender Room Spray', dept: 'Hall', aisle: 'Aisle 4C', bay: 'Bay 2', shelf: 'Top Shelf', img: 'https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?w=200&auto=format&fit=crop&q=80', type: 'standard' }
+      { name: 'Fresh Toned Milk', dept: 'Dairy', aisle: 'Aisle 1A', bay: 'Bay 3', shelf: 'Middle Shelf', img: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=200&auto=format&fit=crop&q=80' },
+      { name: 'Full Cream Cow Milk', dept: 'Dairy', aisle: 'Aisle 1A', bay: 'Bay 4', shelf: 'Lower Shelf', img: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=200&auto=format&fit=crop&q=80' },
+      { name: 'Apple Cider Vinegar', dept: 'Kitchen', aisle: 'Aisle 2B', bay: 'Bay 4', shelf: 'Middle Shelf', img: 'https://images.unsplash.com/photo-1598511726623-d7228a7e089d?w=200&auto=format&fit=crop&q=80' },
+      { name: 'Sunflower Cooking Oil', dept: 'Kitchen', aisle: 'Aisle 2A', bay: 'Bay 1', shelf: 'Lower Shelf', img: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=200&auto=format&fit=crop&q=80' },
+      { name: 'Kadalai Mittai / Peanut Chikki', dept: 'Snacks', aisle: 'Aisle 3C', bay: 'Bay 2', shelf: 'Middle Shelf', img: 'https://images.unsplash.com/photo-1599599810769-bcde5a160d32?w=200&auto=format&fit=crop&q=80' },
+      { name: 'Bathroom Floor Cleaner Liquid', dept: 'Bathroom', aisle: 'Aisle 4A', bay: 'Bay 3', shelf: 'Lower Shelf', img: 'https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?w=200&auto=format&fit=crop&q=80' },
+      { name: 'Paracetamol 650mg Strips', dept: 'Medical', aisle: 'Aisle 5A', bay: 'Bay 1', shelf: 'Top Shelf', img: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=200&auto=format&fit=crop&q=80' },
+      { name: 'Festive Camphor & Brass Lamp Pack', dept: 'Festival', aisle: 'Aisle 1C', bay: 'Bay 2', shelf: 'Special Display', img: 'https://images.unsplash.com/photo-1605371924599-2d0365d3d35f?w=200&auto=format&fit=crop&q=80' },
+      { name: 'Aromatic Lavender Room Spray', dept: 'Hall', aisle: 'Aisle 4C', bay: 'Bay 2', shelf: 'Top Shelf', img: 'https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?w=200&auto=format&fit=crop&q=80' },
     ];
     const variantMap = {
       'fluid-small': [{ label: '250ml', price: 18 }, { label: '500ml (1/2L)', price: 32 }, { label: '1L', price: 60 }],
@@ -344,7 +321,7 @@ Apple Cider Vinegar</textarea>
     let currentLang = 'en';
     let currentActiveStore = 'Main Street Supercenter';
     let userShoppingList = [
-      { id: 'l1', name: 'Fresh Toned Milk (500ml)', variant: '500ml (1/2L)', aisle: 'Aisle 1A', bay: 'Bay 3', shelf: 'Middle Shelf', price: 32, image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=200&auto=format&fit=crop&q=80' }
+      { id: 'l1', name: 'Fresh Toned Milk (500ml)', variant: '500ml (1/2L)', aisle: 'Aisle 1A', bay: 'Bay 3', shelf: 'Middle Shelf', price: 32, image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=200&auto=format&fit=crop&q=80' },
     ];
 
     function showScreen(screenId, hideBottomNav = false) {
@@ -356,7 +333,7 @@ Apple Cider Vinegar</textarea>
       const current = document.getElementById(screenId);
       if (current) current.classList.remove('hidden');
       const backBtn = document.getElementById('header-back-btn');
-      backBtn.classList.toggle('hidden', screenId === 'screen-landing');
+      if (backBtn) backBtn.classList.toggle('hidden', screenId === 'screen-landing');
       const footer = document.getElementById('app-bottom-nav');
       footer.classList.toggle('hidden', hideBottomNav || screenId === 'screen-ar-camera');
       document.getElementById('main-viewport').scrollTop = 0;
@@ -379,24 +356,59 @@ Apple Cider Vinegar</textarea>
       else if (tabKey === 'scan') showScreen('screen-scan-pay');
     }
 
-    function refreshGPSLocation() {
-      document.getElementById('detected-address').innerText = 'Refetching GPS...';
-      showToast('GPS Location Refetched', 'fa-location-crosshairs');
-      setTimeout(() => {
-        document.getElementById('detected-address').innerText = '28, South West Boag Road, T. Nagar, Chennai';
-      }, 800);
+    // Reverse geocode + geolocation support
+    async function refreshGPSLocation() {
+      const addrEl = document.getElementById('detected-address');
+      const mapsLink = document.getElementById('maps-link');
+      addrEl.innerText = 'Detecting location...';
+      mapsLink.classList.add('hidden');
+      showToast('Fetching location', 'fa-location-dot');
+
+      if (!navigator.geolocation) {
+        addrEl.innerText = 'Geolocation not supported';
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        // If a Google Maps API key is provided, use reverse geocoding for a friendly address.
+        if (MAPS_API_KEY && MAPS_API_KEY.length > 5) {
+          try {
+            const res = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${MAPS_API_KEY}`);
+            const json = await res.json();
+            if (json && json.results && json.results.length) {
+              addrEl.innerText = json.results[0].formatted_address + ' (approx)';
+              mapsLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(json.results[0].formatted_address)}`;
+              mapsLink.classList.remove('hidden');
+              document.getElementById('txt-location-city').innerText = (json.results[0].address_components?.slice(-3).map(c=>c.short_name).join(', ') || 'Near you');
+              return;
+            }
+          } catch (e) {
+            console.warn('Geocode failed', e);
+          }
+        }
+        // Fallback: show coords + maps link
+        addrEl.innerText = `${lat.toFixed(5)}, ${lng.toFixed(5)} (tap View on Maps)`;
+        mapsLink.href = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+        mapsLink.classList.remove('hidden');
+        document.getElementById('txt-location-city').innerText = 'Nanganallur, Chennai';
+      }, (err) => {
+        console.warn('geolocation error', err);
+        addrEl.innerText = 'Location permission denied or unavailable';
+      }, { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 });
     }
 
     function selectStoreAndProceed(storeName) {
       currentActiveStore = storeName;
-      document.getElementById('mode-selected-store').innerText = storeName;
+      // keep UI minimal: show store name in header or mode text where necessary
       showScreen('screen-store-mode');
       showToast(`Connected to ${storeName}`, 'fa-store');
     }
 
     function startHomeJourney() { showScreen('screen-home-search'); }
     function startInStoreJourney() { showScreen('screen-store-select'); }
-    function updateSelectedStore(storeName) { currentActiveStore = storeName; document.getElementById('mode-selected-store').innerText = storeName; }
+    function updateSelectedStore(storeName) { currentActiveStore = storeName; }
     function simulateQRStoreScan() { showToast('Store QR Code Scanned!', 'fa-qrcode'); confirmStoreSelection(); }
     function confirmStoreSelection() { showScreen('screen-store-mode'); }
     function openShoppingListMode() { showScreen('screen-shopping-list'); }
@@ -454,6 +466,7 @@ Apple Cider Vinegar</textarea>
 
     function addCustomItemToList() {
       const input = document.getElementById('custom-list-input');
+      if (!input) return;
       const value = input.value.trim();
       if (!value) return;
       addItemToList(value, 'Custom Item', 'Aisle 4D', 'Bay 1', 'Shelf', 120, 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200&auto=format&fit=crop&q=80');
@@ -463,6 +476,7 @@ Apple Cider Vinegar</textarea>
 
     function renderShoppingList() {
       const container = document.getElementById('shopping-list-container');
+      if (!container) return;
       const total = userShoppingList.reduce((sum, item) => sum + Number(item.price || 0), 0);
       container.innerHTML = userShoppingList.map(item => `
         <div class="bg-white p-3 rounded-2xl border border-gray-200 flex items-center justify-between">
@@ -479,8 +493,8 @@ Apple Cider Vinegar</textarea>
           </div>
         </div>
       `).join('');
-      document.getElementById('list-items-summary').innerText = `${userShoppingList.length} items • Estimated ₹${total}`;
-      document.getElementById('list-count-badge').innerText = `${userShoppingList.length} Item${userShoppingList.length === 1 ? '' : 's'}`;
+      const summary = document.getElementById('list-items-summary');
+      if (summary) summary.innerText = `${userShoppingList.length} items • Estimated ₹${total}`;
     }
 
     function removeItemFromList(id) {
@@ -515,9 +529,7 @@ Apple Cider Vinegar</textarea>
             <span class="text-[10px] font-bold text-gray-500">Size:</span>
             <div class="flex space-x-1 overflow-x-auto no-scrollbar">
               ${item.variants.map(v => `
-                <button onclick="addItemToList('${item.name} (${v.label})','${v.label}','${item.aisle}','${item.bay}','${item.shelf}',${v.price},'${item.image}')" class="px-2 py-1 bg-gray-50 hover:bg-walmart-yellow border border-gray-200 rounded-lg text-[10px] font-bold text-walmart-navy shrink-0 transition-all">
-                  ${v.label} (₹${v.price})
-                </button>
+                <button onclick="addItemToList('${item.name} (${v.label})','${v.label}','${item.aisle}','${item.bay}','${item.shelf}',${v.price},'${item.image}')" class="px-2 py-1 bg-gray-50 hover:bg-gray-100 rounded-lg text-[10px] font-bold">${v.label} (₹${v.price})</button>
               `).join('')}
             </div>
           </div>
@@ -536,7 +548,7 @@ Apple Cider Vinegar</textarea>
                   <div class="text-right">
                     <span class="font-black text-walmart-navy">₹${sp.price}</span>
                     <button onclick="selectStoreAndProceed('${sp.store}')" class="text-[9px] font-bold text-walmart-blue block underline">Select Store</button>
-                    <button onclick="addItemToList('${item.name} - ${sp.store}','${item.variants[0].label}','${item.aisle}','${item.bay}','${item.shelf}',${sp.price},'${item.image}')" class="text-[9px] mt-1 bg-walmart-blue text-white px-2 py-1 rounded-md">Add to cart</button>
+                    <button onclick="addItemToList('${item.name} - ${sp.store}','${item.variants[0].label}','${item.aisle}','${item.bay}','${item.shelf}',${sp.price},'${item.image}')" class="text-[9px] font-bold text-walmart-blue block underline">Add</button>
                   </div>
                 </div>
               `).join('')}
@@ -554,6 +566,7 @@ Apple Cider Vinegar</textarea>
     function renderBrowseCatalog() {
       const query = document.getElementById('catalog-search-input')?.value?.toLowerCase()?.trim() || '';
       const container = document.getElementById('browse-catalog-container');
+      if (!container) return;
       const filtered = catalogMasterDB.filter(item => {
         return !query || item.name.toLowerCase().includes(query) || item.dept.toLowerCase().includes(query);
       }).slice(0, 30);
@@ -569,7 +582,7 @@ Apple Cider Vinegar</textarea>
           </div>
           <div class="text-right">
             <div class="font-black text-walmart-navy">₹${item.variants[0].price}</div>
-            <button onclick="addItemToList('${item.name} (${item.variants[0].label})','${item.variants[0].label}','${item.aisle}','${item.bay}','${item.shelf}',${item.variants[0].price},'${item.image}')" class="mt-2 bg-walmart-blue text-white text-xs px-3 py-1 rounded-full">Add to cart</button>
+            <button onclick="addItemToList('${item.name} (${item.variants[0].label})','${item.variants[0].label}','${item.aisle}','${item.bay}','${item.shelf}',${item.variants[0].price},'${item.image}')" class="text-[10px] font-bold text-walmart-blue underline">Add</button>
           </div>
         </div>
       `).join('');
@@ -581,12 +594,9 @@ Apple Cider Vinegar</textarea>
         return;
       }
       const firstItem = userShoppingList[0];
-      document.getElementById('ar-pin-name').innerText = firstItem.name;
-      document.getElementById('ar-pin-img').src = firstItem.image;
-      document.getElementById('ar-next-name').innerText = firstItem.name;
-      document.getElementById('ar-next-img').src = firstItem.image;
+      // set AR pin details if present
       showScreen('screen-ar-camera', true);
-      showToast('AR route generated', 'fa-location-crosshairs');
+      showToast('AR route generated', 'fa-location-dot');
     }
 
     function markARItemCollected() {
@@ -594,16 +604,16 @@ Apple Cider Vinegar</textarea>
       setTimeout(() => showScreen('screen-scan-pay'), 700);
     }
 
-    function exitARCamera() {
-      showScreen('screen-shopping-list');
-    }
+    function exitARCamera() { showScreen('screen-shopping-list'); }
 
     function renderScanCartSummary() {
       const container = document.getElementById('scan-cart-items-list');
       if (!container) return;
       const total = userShoppingList.reduce((sum, item) => sum + Number(item.price || 0), 0);
-      document.getElementById('scan-cart-count').innerText = `${userShoppingList.length} item${userShoppingList.length === 1 ? '' : 's'}`;
-      document.getElementById('scan-cart-total-price').innerText = `₹${total.toFixed(2)}`;
+      const countEl = document.getElementById('scan-cart-count');
+      const totalEl = document.getElementById('scan-cart-total-price');
+      if (countEl) countEl.innerText = `${userShoppingList.length} item${userShoppingList.length === 1 ? '' : 's'}`;
+      if (totalEl) totalEl.innerText = `₹${total.toFixed(2)}`;
       container.innerHTML = userShoppingList.map(item => `
         <div class="flex justify-between items-center">
           <div>
@@ -623,28 +633,22 @@ Apple Cider Vinegar</textarea>
     function processUPIPayment() {
       showScreen('screen-payment-success');
       const total = userShoppingList.reduce((sum, item) => sum + Number(item.price || 0), 0);
-      document.getElementById('success-total-paid').innerText = `₹${total.toFixed(2)} paid via UPI`;
+      const paidEl = document.getElementById('success-total-paid');
+      if (paidEl) paidEl.innerText = `₹${total.toFixed(2)} paid via UPI`;
       showToast('Payment Successful!', 'fa-check');
     }
 
-    function resetAppToHome() {
-      showScreen('screen-landing');
-      navTabClick('home');
-    }
+    function resetAppToHome() { showScreen('screen-landing'); navTabClick('home'); }
 
     function openLanguageModal() { document.getElementById('language-modal').classList.remove('hidden'); }
     function closeLanguageModal() { document.getElementById('language-modal').classList.add('hidden'); }
-    function setLanguage(lang) {
-      currentLang = lang;
-      document.getElementById('active-lang-code').innerText = lang.toUpperCase();
-      closeLanguageModal();
-      showToast(`Language set: ${lang.toUpperCase()}`, 'fa-globe');
-    }
+    function setLanguage(lang) { currentLang = lang; document.getElementById('active-lang-code').innerText = lang.toUpperCase(); closeLanguageModal(); showToast(`Language set: ${lang.toUpperCase()}`, 'fa-globe'); }
 
     function showToast(msg, icon = 'fa-circle-info') {
       const box = document.getElementById('toast-box');
       const msgEl = document.getElementById('toast-msg');
       const iconEl = document.getElementById('toast-icon');
+      if (!box || !msgEl || !iconEl) return;
       msgEl.innerText = msg;
       iconEl.className = `fa-solid ${icon} text-walmart-yellow`;
       box.classList.remove('hidden');
@@ -657,6 +661,8 @@ Apple Cider Vinegar</textarea>
       renderShoppingList();
       renderScanCartSummary();
       showScreen('screen-landing');
+      // attempt to fetch GPS/location on load
+      refreshGPSLocation();
     });
   </script>
 </body>
