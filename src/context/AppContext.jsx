@@ -1,25 +1,38 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import generateCatalog from '../data/catalog'
 
 const AppContext = createContext(null)
+const CART_STORAGE_KEY = 'cartkb-shopping-list'
 
 export function useApp(){
   return useContext(AppContext)
+}
+
+function loadShoppingList(){
+  try {
+    const saved = window.localStorage.getItem(CART_STORAGE_KEY)
+    return saved ? JSON.parse(saved) : []
+  } catch {
+    return []
+  }
 }
 
 export function AppProvider({ children }){
   const [currentScreen, setCurrentScreen] = useState('screen-landing')
   const [currentLang, setCurrentLang] = useState('en')
   const [currentStore, setCurrentStore] = useState('Main Street Supercenter')
-  const [catalog, setCatalog] = useState([])
-  const [shoppingList, setShoppingList] = useState([])
+  const [catalog] = useState(() => generateCatalog())
+  const [shoppingList, setShoppingList] = useState(loadShoppingList)
+  const [isListImportOpen, setIsListImportOpen] = useState(false)
   const [toast, setToast] = useState({ visible:false, msg:'', icon:'fa-circle-info' })
 
   useEffect(() => {
-    // generate catalog once
-    const db = generateCatalog()
-    setCatalog(db)
-  }, [])
+    try {
+      window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(shoppingList))
+    } catch (error) {
+      console.warn('Could not save the shopping list locally', error)
+    }
+  }, [shoppingList])
 
   function navigate(screenId){
     setCurrentScreen(screenId)
@@ -32,8 +45,18 @@ export function AppProvider({ children }){
   }
 
   function addItemToList(item){
-    setShoppingList(prev => [...prev, { ...item, id: Date.now().toString(), collected:false }])
-    showToast(`Added ${item.name} to list`, 'fa-cart-plus')
+    setShoppingList(prev => [...prev, { ...item, id: window.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`, collected:false }])
+    showToast(`Added ${item.name} to cart`, 'fa-cart-plus')
+  }
+
+  function addItemsToList(items){
+    const newItems = items.map((item, index) => ({
+      ...item,
+      id: window.crypto?.randomUUID?.() || `${Date.now()}-${index}-${Math.random()}`,
+      collected: false
+    }))
+    setShoppingList(prev => [...prev, ...newItems])
+    return newItems.length
   }
 
   function removeItemFromList(id){
@@ -46,7 +69,6 @@ export function AppProvider({ children }){
   }
 
   function processUPI(){
-    // simulate payment
     navigate('screen-payment-success')
     showToast('Payment Successful!', 'fa-check')
   }
@@ -56,7 +78,8 @@ export function AppProvider({ children }){
       currentScreen, navigate,
       currentLang, setCurrentLang,
       currentStore, selectStore,
-      catalog, shoppingList, addItemToList, removeItemFromList,
+      catalog, shoppingList, addItemToList, addItemsToList, removeItemFromList,
+      isListImportOpen, openListImport:()=>setIsListImportOpen(true), closeListImport:()=>setIsListImportOpen(false),
       showToast, toast, processUPI
     }}>
       {children}
