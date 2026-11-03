@@ -1,76 +1,665 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0071dc">
-  <title>CartKB — Smart Shopping</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>CartKB — Smart Shopping & AR Navigation</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            walmart: {
+              blue: '#0071DC',
+              navy: '#041E42',
+              yellow: '#FFC220',
+              yellowHover: '#E0A812',
+              bg: '#F2F8FD',
+              green: '#2A8703',
+              grayLight: '#F3F4F6',
+              border: '#E6E6E6'
+            }
+          },
+          fontFamily: { sans: ['Inter','-apple-system','BlinkMacSystemFont','Segoe UI','Roboto','sans-serif'] }
+        }
+      }
+    }
+  </script>
   <style>
-    :root{font-family:Inter,system-ui,sans-serif;color:#14233b;background:#eef4fa;font-synthesis:none}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#eef4fa}.app{width:min(100%,520px);height:100dvh;min-height:560px;margin:auto;background:#f6f9fc;display:flex;flex-direction:column;box-shadow:0 10px 50px #09264b24;position:relative;overflow:hidden}.topbar{background:#0071dc;color:white;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px}.logo{width:36px;height:36px;border-radius:12px;background:#ffc220;color:#041e42;display:grid;place-items:center}.actions{display:flex;gap:8px}.btn{border:0;border-radius:999px;padding:9px 13px;font:700 12px inherit;cursor:pointer}.top-action{background:#ffffff24;color:#fff;border:1px solid #ffffff55}.main{flex:1;overflow:auto;padding:16px}.bottom{display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-top:1px solid #e1e7ee;padding:8px 4px max(8px,env(safe-area-inset-bottom))}.tab{border:0;background:transparent;color:#7a8798;display:grid;gap:4px;justify-items:center;font:600 10px Inter;cursor:pointer}.tab i{font-size:17px}.tab.active{color:#0071dc}.hero{background:linear-gradient(120deg,#ffcf3d,#ffa900);padding:20px;border-radius:22px;margin:12px 0 18px;color:#152943}.hero h2{margin:7px 0;font-size:22px}.hero p{margin:0;font-size:12px}.eyebrow{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.section-title{font-size:15px;font-weight:800;margin:18px 0 10px}.muted{color:#748196;font-size:12px}.card{background:white;border:1px solid #e1e7ee;border-radius:18px;padding:14px;margin-bottom:10px}.launch{display:grid;grid-template-columns:1fr 1fr;gap:10px}.launch button{background:white;border:1px solid #e1e7ee;border-radius:18px;padding:18px 10px;color:#11284a;font:700 13px Inter;cursor:pointer}.launch i{display:block;color:#0071dc;font-size:22px;margin-bottom:9px}.search{width:100%;padding:12px 14px;border:1px solid #cbd6e2;border-radius:14px;font:13px Inter;outline-color:#0071dc;background:white}.chips{display:flex;overflow:auto;gap:7px;padding:12px 0;scrollbar-width:none}.chip{white-space:nowrap;border:1px solid #dfe5ec;background:#fff;color:#34445a;border-radius:999px;padding:7px 11px;font:700 10px Inter;cursor:pointer}.chip.selected{background:#0071dc;color:white;border-color:#0071dc}.product{display:grid;grid-template-columns:56px 1fr auto;gap:10px;align-items:center}.product .pic{width:56px;height:56px;background:#eaf2f8;border-radius:13px;display:grid;place-items:center;color:#0071dc;font-size:21px}.product-name{font-size:12px;font-weight:800;line-height:1.4}.product-meta{font-size:10px;color:#78869a;margin-top:4px}.price{font-size:13px;font-weight:800;text-align:right}.add{display:block;margin-top:7px;background:#ffc220;color:#172840;border:0;border-radius:999px;padding:7px 11px;font:800 10px Inter;cursor:pointer}.empty{text-align:center;padding:35px 20px}.empty i{color:#0071dc;font-size:28px;margin-bottom:12px}.modal{position:absolute;inset:0;background:#07172cb8;z-index:5;display:flex;align-items:center;justify-content:center;padding:16px}.dialog{width:100%;max-width:440px;max-height:92%;overflow:auto;background:white;border-radius:22px;padding:19px}.dialog h2{font-size:18px;margin:0 0 6px}.dialog textarea{width:100%;resize:vertical;min-height:130px;border:1px solid #ccd5e0;border-radius:12px;padding:11px;font:13px Inter}.dialog .btn{padding:12px}.primary{background:#ffc220;color:#14233b}.secondary{background:#eef2f6;color:#41516a}.hidden{display:none!important}.preview{max-height:170px;max-width:100%;display:block;margin:12px auto;border-radius:12px;object-fit:contain}.alert{background:#fff0f0;color:#a52323;border-radius:10px;padding:10px;font-size:12px}.toast{position:absolute;top:72px;left:50%;transform:translateX(-50%);background:#071d3c;color:white;border-radius:999px;padding:11px 16px;font-size:12px;font-weight:700;z-index:10;white-space:nowrap;box-shadow:0 4px 20px #0003}.store{display:flex;align-items:center;gap:12px}.store-icon{width:42px;height:42px;border-radius:13px;background:#eaf3ff;color:#0071dc;display:grid;place-items:center}.badge{background:#e8f4ff;color:#0065c7;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:800}
-    @media(min-width:650px){body{padding:20px 0}.app{height:min(900px,calc(100dvh - 40px));border-radius:28px}}
+    body { font-family: 'Inter', sans-serif; background: #041E42; -webkit-tap-highlight-color: transparent; user-select: none; }
+    .app-container { max-width: 430px; height: 880px; box-shadow: 0 25px 60px -15px rgba(0,0,0,0.7), 0 0 40px rgba(0,113,220,0.35); }
+    @media (max-width:640px){ .app-container{ max-width:100vw; height:100vh; border-radius:0!important; border:none!important; } }
+    @keyframes arPathPulse { 0%{opacity:.4;transform:scaleY(.96);}50%{opacity:.95;transform:scaleY(1.03);}100%{opacity:.4;transform:scaleY(.96);} }
+    .ar-animated-path{animation:arPathPulse 1.8s infinite ease-in-out;transform-origin:bottom center}
+    @keyframes pinFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px)}}
+    .ar-pin-float{animation:pinFloat 2.2s infinite ease-in-out}
+    .no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
+    .custom-scroll::-webkit-scrollbar{width:4px}.custom-scroll::-webkit-scrollbar-track{background:#F2F8FD}.custom-scroll::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:4px}
+    /* Logo styles */
+    .cartkb-logo { width: 36px; height: 36px }
+    .logo-text { font-weight: 800; letter-spacing: -0.02em }
+    .estimated-pill { background: rgba(255,194,32,0.12); color: #FFC220; padding: 4px 8px; border-radius: 999px; font-weight:700; font-size:11px }
   </style>
 </head>
-<body>
-<div class="app">
-  <header class="topbar"><div class="brand"><div class="logo"><i class="fa-solid fa-cart-shopping"></i></div><div>Cart<span style="color:#ffc220">KB</span><div style="font-size:9px;font-weight:500;opacity:.8">Smart shopping • Chennai</div></div></div><div class="actions"><button class="btn top-action" data-action="open-import"><i class="fa-regular fa-image"></i> Upload list</button><button class="btn top-action" data-action="language">EN</button></div></header>
-  <main class="main" id="main"></main>
-  <nav class="bottom"><button class="tab active" data-tab="home"><i class="fa-solid fa-house"></i>Home</button><button class="tab" data-tab="list"><i class="fa-solid fa-list-check"></i>My list</button><button class="tab" data-tab="browse"><i class="fa-solid fa-store"></i>Browse</button><button class="tab" data-tab="scan"><i class="fa-solid fa-qrcode"></i>Checkout</button></nav>
-  <div id="modal-root"></div><div id="toast-root"></div>
-</div>
-<script>
-'use strict';
-const groups=[
- {category:'Fruits',dept:'Fruits',aisle:'Aisle 1A',base:35,names:['Alphonso Mango','Robusta Banana','Washington Apple','Navel Orange','Green Grapes','Black Grapes','Pomegranate','Guava','Papaya','Sweet Lime'],brands:['Farm Fresh','Nature Basket','Daily Harvest','Orchard Select','Local Market']},
- {category:'Fruits',dept:'Fruits',aisle:'Aisle 1B',base:45,names:['Dragon Fruit','Kiwi Fruit','Pear','Pineapple','Watermelon','Muskmelon','Strawberry','Blueberry','Jamun','Seasonal Chikoo'],brands:['Farm Fresh','Nature Basket','Daily Harvest','Orchard Select','Local Market']},
- {category:'Veggies',dept:'Veggies',aisle:'Aisle 1C',base:20,names:['Tomato','Red Onion','Potato','Carrot','Green Capsicum','Cucumber','Cauliflower','Cabbage','Brinjal','Green Peas'],brands:['Farm Fresh','Nature Basket','Daily Harvest','Local Market','Fresh Fields']},
- {category:'Veggies',dept:'Veggies',aisle:'Aisle 1D',base:18,names:['Spinach','Coriander Leaves','Curry Leaves','Drumstick','Okra','Bottle Gourd','Bitter Gourd','Beetroot','Sweet Potato','Green Beans'],brands:['Farm Fresh','Nature Basket','Daily Harvest','Local Market','Fresh Fields']},
- {category:'Grocery & Kitchen',dept:'Grocery & Kitchen',aisle:'Aisle 2A',base:65,names:['Sona Masoori Rice','Basmati Rice','Whole Wheat Atta','Toor Dal','Moong Dal','Chana Dal','Rajma','Poha','Rava Sooji','Millet Mix'],brands:['Tata Sampann','Aashirvaad','Fortune','24 Mantra','Kitchen Select']},
- {category:'Grocery & Kitchen',dept:'Grocery & Kitchen',aisle:'Aisle 2B',base:80,names:['Sunflower Oil','Groundnut Oil','Coconut Oil','Gingelly Oil','Olive Oil','Turmeric Powder','Chilli Powder','Sambar Powder','Garam Masala','Black Pepper'],brands:['Fortune','Aachi','Tata Sampann','Organic Tattva','Kitchen Select']},
- {category:'Grocery & Kitchen',dept:'Grocery & Kitchen',aisle:'Aisle 2C',base:45,names:['Apple Cider Vinegar','Tomato Ketchup','Coconut Milk','Peanut Butter','Honey','Instant Coffee','Tea Leaves','Jaggery Powder','Pasta Sauce','Pickle'],brands:['Tata Sampann','Aachi','Dabur','Organic Tattva','Kitchen Select']},
- {category:'Grocery & Kitchen',dept:'Grocery & Kitchen',aisle:'Aisle 2D',base:32,names:['Toned Milk','Curd','Paneer','Salted Butter','Cheddar Cheese','Fresh Cream','Buttermilk','Greek Yogurt','Ghee','Condensed Milk'],brands:['Amul','Aavin','Heritage','Milky Mist','Daily Fresh']},
- {category:'Grocery & Kitchen',dept:'Grocery & Kitchen',aisle:'Aisle 2E',base:25,names:['Sandwich Bread','Whole Wheat Bread','Burger Buns','Pav Buns','Rusk Toast','Croissant','Fruit Cake','Multigrain Loaf','Pita Bread','Garlic Bread'],brands:['Modern','Harvest Gold','Britannia','The Baker','Daily Fresh']},
- {category:'Grocery & Kitchen',dept:'Grocery & Kitchen',aisle:'Aisle 2F',base:50,names:['Breakfast Oats','Corn Flakes','Muesli','Wheat Flakes','Granola','Chia Seeds','Flax Seeds','Almond Flour','Coconut Flour','Protein Pancake Mix'],brands:['Kellogg’s','Quaker','Yoga Bar','True Elements','Kitchen Select']},
- {category:'Snacks & Drinks',dept:'Snacks & Drinks',aisle:'Aisle 3A',base:20,names:['Masala Potato Chips','Salted Potato Chips','Banana Chips','Kadalai Mittai','Murukku','Mixture Namkeen','Roasted Peanuts','Popcorn','Nacho Chips','Chocolate Wafer'],brands:['Aachi','Haldiram’s','Bingo!','Too Yumm!','Snack House']},
- {category:'Snacks & Drinks',dept:'Snacks & Drinks',aisle:'Aisle 3B',base:25,names:['Orange Juice','Mango Drink','Lime Soda','Sparkling Water','Coconut Water','Iced Tea','Cola Drink','Energy Drink','Apple Juice','Filter Coffee Can'],brands:['Paper Boat','Tropicana','Real','Campa','Daily Refresh']},
- {category:'Snacks & Drinks',dept:'Snacks & Drinks',aisle:'Aisle 3C',base:35,names:['Dark Chocolate','Milk Chocolate','Cashew Cookies','Oat Cookies','Digestive Biscuits','Cream Biscuits','Almonds','Cashews','Pistachios','Trail Mix'],brands:['Amul','Britannia','Sunfeast','Cadbury','Snack House']},
- {category:'Fashion & Lifestyle',dept:'Fashion & Lifestyle',aisle:'Aisle 4A',base:199,names:['Cotton Crew T-Shirt','Polo T-Shirt','Casual Shirt','Leggings','Cotton Kurta','Denim Jeans','Sleepwear Set','Sports Shorts','Cotton Socks','Everyday Scarf'],brands:['Style Street','Urban Loom','Everyday Wear','Indi Threads','Active Life']},
- {category:'Fashion & Lifestyle',dept:'Fashion & Lifestyle',aisle:'Aisle 4B',base:149,names:['Reusable Tote Bag','Travel Pouch','Cotton Hand Towel','Water Bottle','Lunch Bag','Compact Umbrella','Wallet','Hair Band Set','Sunglasses','Travel Organizer'],brands:['Style Street','Urban Loom','Everyday Wear','Indi Threads','Active Life']},
- {category:'Beauty & Personal Care',dept:'Beauty & Personal Care',aisle:'Aisle 5A',base:55,names:['Moisturizing Soap','Neem Bathing Soap','Shampoo','Conditioner','Body Lotion','Face Wash','Toothpaste','Toothbrush','Hand Wash','Deodorant'],brands:['Himalaya','Dove','Pond’s','Dabur','Personal Care Co']},
- {category:'Beauty & Personal Care',dept:'Beauty & Personal Care',aisle:'Aisle 5B',base:75,names:['Sunscreen Lotion','Aloe Vera Gel','Lip Balm','Face Moisturizer','Hair Oil','Hair Serum','Clay Face Mask','Micellar Cleanser','Talcum Powder','Rose Water Toner'],brands:['Himalaya','Dove','Pond’s','Dabur','Personal Care Co']},
- {category:'Household Essentials',dept:'Household Essentials',aisle:'Aisle 6A',base:65,names:['Laundry Detergent','Dishwash Liquid','Floor Cleaner','Bathroom Cleaner','Glass Cleaner','Fabric Softener','Scrub Sponge','Garbage Bags','Paper Towels','Toilet Cleaner'],brands:['Vim','Surf Excel','Harpic','Lizol','Home Essentials']},
- {category:'Household Essentials',dept:'Household Essentials',aisle:'Aisle 6B',base:40,names:['LED Bulb','Storage Container','Kitchen Foil Roll','Food Storage Bags','Microfiber Cloth','Mop Refill','Laundry Basket','Room Freshener','Mosquito Repellent','Scented Candle'],brands:['Home Essentials','Bright Living','Godrej','Odonil','Everyday Home']},
- {category:'Hobbies & Interests',dept:'Hobbies & Interests',aisle:'Aisle 7A',base:60,names:['Watercolor Set','Sketchbook','Color Pencil Set','Acrylic Paint Set','Craft Paper Pack','Knitting Yarn','Gardening Gloves','Seed Starter Kit','Yoga Mat','Resistance Bands'],brands:['Creative Corner','Art House','Garden Life','Active Life','Hobby Works']}
-];
-const packs=[['250g / 250ml',.65],['500g / 500ml',1],['1kg / 1L',1.8],['Family size',2.7],['Value size',4.2]];
-const categories=['Fruits','Veggies','Grocery & Kitchen','Snacks & Drinks','Fashion & Lifestyle','Beauty & Personal Care','Household Essentials','Hobbies & Interests'];
-const collections=['Festival Specials','Explore',"Today’s Deals",'Featured','Fresh At','Offers for You','Buy Again','Season’s Best','Blockbuster Deals',...categories];
-const catalog=[];let id=1;
-groups.forEach((g,gi)=>g.names.forEach((n,ni)=>packs.forEach(([label,m],pi)=>{const price=Math.max(10,Math.round(g.base*m));let tags=['Explore',g.category];if(id%4===0)tags.push('Featured');if(id%3===0)tags.push('Today’s Deals','Offers for You');if(id%7===0)tags.push('Buy Again');if(id%11===0)tags.push('Blockbuster Deals');if(gi<4){tags.push('Fresh At');if(ni%2===0)tags.push('Season’s Best')}if(/mango|grape|sweet|jamun|oil|ghee|jaggery|rice|masala/i.test(n))tags.push('Festival Specials');catalog.push({id:`p${id++}`,name:`${g.brands[ni%g.brands.length]} ${n} - ${label}`,dept:g.dept,category:g.category,collections:[...new Set(tags)],aisle:g.aisle,bay:`Bay ${(ni%5)+1}`,shelf:['Top Shelf','Middle Shelf','Lower Shelf'][(ni+pi)%3],price,image:'https://images.unsplash.com/photo-1542838132-92c53300491e?w=180&auto=format&fit=crop&q=75'});}))))
-let list=[];try{list=JSON.parse(localStorage.getItem('cartkb-shopping-list')||'[]');if(!Array.isArray(list))list=[]}catch{list=[]}
-let screen='home',activeCategory='All',query='',modalUrl='',ocrBusy=false;
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function persist(){try{localStorage.setItem('cartkb-shopping-list',JSON.stringify(list))}catch{}}
-function toast(msg){const r=document.getElementById('toast-root');r.innerHTML=`<div class="toast">${esc(msg)}</div>`;setTimeout(()=>r.innerHTML='',2200)}
-function setScreen(s){screen=s;activeCategory='All';query='';render()}
-function addItem(item){list.push({...item,id:`${Date.now()}-${Math.random()}`,collected:false});persist();toast('Added to your shopping list')}
-function productCard(p){return `<article class="card product"><div class="pic"><i class="fa-solid fa-basket-shopping"></i></div><div><div class="product-name">${esc(p.name)}</div><div class="product-meta">${esc(p.category)} · ${esc(p.aisle)} · ${esc(p.bay)}</div><div class="product-meta">${esc(p.collections.filter(c=>c!==p.category&&c!=='Explore').slice(0,2).join(' · '))}</div></div><div class="price">₹${p.price}<button class="add" data-add="${p.id}">Add</button></div></article>`}
-function filteredProducts(){const q=query.trim().toLocaleLowerCase();return catalog.filter(p=>(activeCategory==='All'||p.category===activeCategory||p.collections.includes(activeCategory))&&(!q||p.name.toLocaleLowerCase().includes(q)||p.category.toLocaleLowerCase().includes(q)||p.collections.some(c=>c.toLocaleLowerCase().includes(q)))).slice(0,60)}
-function browseView(home=false){const items=filteredProducts();return `${home?`<div class="row"><div><span class="badge">PRE-RIDE CHECK</span><h2 style="font-size:18px;margin:9px 0 3px">Search & compare products</h2></div><b style="font-size:11px;color:#0071dc">${catalog.length.toLocaleString()} products</b></div>`:`<h2 style="margin:0 0 4px;font-size:18px">Browse catalog</h2><p class="muted">${catalog.length.toLocaleString()} sample products across departments and collections.</p>`}<input id="search" class="search" value="${esc(query)}" placeholder="Search products, departments, or offers…"><div class="chips">${['All',...collections].map(c=>`<button class="chip ${activeCategory===c?'selected':''}" data-category="${esc(c)}">${esc(c)}</button>`).join('')}</div><p class="muted">Showing ${items.length} matches · ${catalog.length.toLocaleString()} products total</p>${items.length?items.map(productCard).join(''):'<div class="card empty">No products found. Try another search or category.</div>'}`}
-function landing(){return `<div class="row"><div><div class="badge">Estimated location</div><div class="muted" style="margin-top:5px">Nanganallur, Chennai</div></div><button class="chip" data-action="location"><i class="fa-solid fa-location-crosshairs"></i> Update</button></div><div class="hero"><span class="eyebrow">Diwali & festive deals</span><h2>Grand festive savings!</h2><p>Discover everyday essentials, fresh picks, and special offers.</p></div><div class="section-title">Start shopping</div><div class="launch"><button data-screen="home-search"><i class="fa-solid fa-magnifying-glass"></i>Search products</button><button data-screen="browse"><i class="fa-solid fa-store"></i>Browse catalog</button><button data-action="open-import"><i class="fa-regular fa-image"></i>Scan a list</button><button data-screen="list"><i class="fa-solid fa-list-check"></i>My shopping list (${list.length})</button></div><div class="section-title">Nearby stores</div>${[['Nilgiris Supermarket','1st Main Road, Nanganallur · 0.4 km'],['Reliance Smart Point','48th Street, Nanganallur · 0.7 km'],['V V Mart','Nanganallur · 0.8 km']].map(([n,a])=>`<div class="card store"><div class="store-icon"><i class="fa-solid fa-shop"></i></div><div style="flex:1"><b style="font-size:12px">${n}</b><div class="muted">${a}</div></div><span class="badge">Open</span></div>`).join('')}`}
-function listView(){const total=list.reduce((s,i)=>s+(Number(i.price)||0),0);return `<div class="row"><div><h2 style="margin:0;font-size:18px">Your shopping list</h2><p class="muted">${list.length} items · Estimated ₹${total.toFixed(2)}</p></div><button class="chip" data-action="open-import"><i class="fa-solid fa-camera"></i> Scan list</button></div>${list.length?list.map(i=>`<div class="card product"><div class="pic"><i class="fa-solid fa-basket-shopping"></i></div><div><div class="product-name">${esc(i.name)}</div><div class="product-meta">${esc(i.aisle||'Aisle not assigned')}${i.bay?' · '+esc(i.bay):''}</div>${i.price?`<div class="product-meta">${esc(i.shelf||'')}</div>`:'<div class="product-meta" style="color:#9a6500">Needs identification · price not set</div>'}</div><div class="price">${i.price?'₹'+Number(i.price).toFixed(2):'—'}<button class="add" data-remove="${esc(i.id)}">Remove</button></div></div>`).join('')+`<button class="btn primary" style="width:100%;margin-top:8px" data-screen="navigate">Start aisle navigation</button>`:`<div class="card empty"><i class="fa-solid fa-list-check"></i><h3 style="margin:0 0 5px">Your list is empty</h3><p class="muted">Scan a handwritten list or browse the catalog to add items.</p><button class="btn primary" data-action="open-import">Upload a list image</button><button class="btn secondary" data-screen="browse">Browse products</button></div>`}`}
-function checkout(){const total=list.reduce((s,i)=>s+(Number(i.price)||0),0);return `<h2 style="margin:0 0 6px;font-size:18px">Checkout</h2><p class="muted">Review your cart before payment.</p>${list.length?`<div class="card">${list.map(i=>`<div class="row" style="padding:8px 0;border-bottom:1px solid #edf0f3"><span style="font-size:12px">${esc(i.name)}</span><b>₹${Number(i.price||0).toFixed(2)}</b></div>`).join('')}<div class="row" style="padding-top:12px"><b>Total</b><b>₹${total.toFixed(2)}</b></div></div><button class="btn primary" style="width:100%" data-action="pay">Pay with UPI (demo)</button><button class="btn secondary" style="width:100%;margin-top:8px" data-screen="navigate">Scan items</button>`:'<div class="card empty"><p>Your cart is empty.</p><button class="btn primary" data-screen="browse">Browse products</button></div>'}`}
-function render(){const main=document.getElementById('main');if(screen==='home')main.innerHTML=landing();else if(screen==='home-search')main.innerHTML=browseView(true);else if(screen==='browse')main.innerHTML=browseView(false);else if(screen==='list')main.innerHTML=listView();else if(screen==='scan')main.innerHTML=checkout();else if(screen==='navigate')main.innerHTML=`<h2 style="margin:0 0 8px;font-size:18px">Aisle navigation</h2><p class="muted">Your route is ready. Follow your list aisle by aisle.</p>${list.length?list.map((i,n)=>`<div class="card row"><div><span class="badge">${esc(i.aisle||'Aisle TBD')}</span><div class="product-name" style="margin-top:8px">${esc(i.name)}</div><div class="product-meta">${esc(i.bay||'')}</div></div><button class="btn ${i.collected?'secondary':'primary'}" data-collected="${esc(i.id)}">${i.collected?'Collected':'Found it'}</button></div>`).join(''):'<p class="muted">Add products to your list to plan a route.</p>'}<button class="btn secondary" data-screen="list">Back to list</button>`;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===({home:'home', 'home-search':'home',browse:'browse',list:'list',scan:'scan',navigate:'list'}[screen])));document.getElementById('modal-root').innerHTML='';}
-function openImport(){document.getElementById('modal-root').innerHTML=`<div class="modal" id="import-modal"><section class="dialog" role="dialog" aria-modal="true" aria-labelledby="ocr-title"><div class="row"><div><h2 id="ocr-title">Scan your shopping list</h2><div class="muted">Upload or photograph a list. Review OCR results before adding them.</div></div><button class="chip" data-action="close-import" aria-label="Close">✕</button></div><label class="muted" style="display:block;margin-top:15px">Choose an image (JPG, PNG, WebP; max 10 MB)</label><input id="image-input" type="file" accept="image/*" capture="environment" style="margin-top:7px;font-size:12px"><img id="image-preview" class="preview hidden" alt="Uploaded shopping list preview"><div id="ocr-status" class="muted" style="margin:10px 0"></div><div id="ocr-error"></div><label for="recognized-items" class="product-name" style="display:block;margin:10px 0 6px">Recognized items — edit before adding</label><textarea id="recognized-items" placeholder="Recognized items appear here. You can also type or correct them."></textarea><p class="muted" style="font-size:10px">Items that do not match the sample catalog are saved without a price so you can identify them in store.</p><div class="row" style="margin-top:12px"><button class="btn secondary" data-action="close-import">Cancel</button><button class="btn primary" data-action="confirm-import">Confirm & add to cart</button></div></section></div>`;document.getElementById('image-input').addEventListener('change',recognizeImage)}
-function showOcrError(msg){document.getElementById('ocr-error').innerHTML=`<div class="alert" role="alert">${esc(msg)}</div>`}
-async function recognizeImage(e){const file=e.target.files?.[0];if(!file)return;document.getElementById('ocr-error').innerHTML='';if(!file.type.startsWith('image/'))return showOcrError('Choose an image file such as JPG, PNG, or WebP.');if(file.size>10*1024*1024)return showOcrError('This image is larger than 10 MB. Please choose a smaller image.');const preview=document.getElementById('image-preview');if(modalUrl)URL.revokeObjectURL(modalUrl);modalUrl=URL.createObjectURL(file);preview.src=modalUrl;preview.classList.remove('hidden');const status=document.getElementById('ocr-status');status.textContent='Loading text recognition…';ocrBusy=true;try{if(!window.Tesseract){await new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';s.onload=resolve;s.onerror=reject;document.head.appendChild(s)})}const worker=await Tesseract.createWorker('eng');const result=await worker.recognize(file);await worker.terminate();const clean=(result.data.text||'').split(/\r?\n/).map(x=>x.replace(/^\s*(?:[-*•▪]|\d+[.)])\s*/,'').trim()).filter(x=>x&&!/^[-_=|.]+$/.test(x)).join('\n');document.getElementById('recognized-items').value=clean;if(!clean)showOcrError('No text was found. Try a clearer, well-lit photo, or type the items below.');status.textContent=clean?'Text recognition complete. Please review and edit the items.':''}catch(err){console.error(err);showOcrError('Text recognition could not complete. Check your connection and try again, or type the items below.');status.textContent=''}finally{ocrBusy=false}}
-function closeImport(){if(modalUrl)URL.revokeObjectURL(modalUrl);modalUrl='';document.getElementById('modal-root').innerHTML=''}
-function confirmImport(){const lines=[...new Set(document.getElementById('recognized-items').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean))];if(!lines.length)return showOcrError('Add at least one item before confirming.');const additions=lines.map(line=>{const q=line.toLocaleLowerCase().replace(/\s+/g,' ');const match=catalog.find(p=>p.name.toLocaleLowerCase()===q)||catalog.find(p=>p.name.toLocaleLowerCase().includes(q)||q.includes(p.name.toLocaleLowerCase().replace(/\s*-\s*.*$/,'')));return match?{name:match.name,variant:match.name.split(' - ').pop(),aisle:match.aisle,bay:match.bay,shelf:match.shelf,price:match.price,image:match.image}:{name:line,variant:'Needs matching in store',aisle:'Aisle not assigned',bay:'',shelf:'',price:0,image:''}});list.push(...additions.map(i=>({...i,id:`${Date.now()}-${Math.random()}`,collected:false})));persist();closeImport();setScreen('list');toast(`${additions.length} item${additions.length===1?'':'s'} added to cart`)}
-document.addEventListener('click',e=>{const target=e.target.closest('[data-action],[data-screen],[data-tab],[data-category],[data-add],[data-remove],[data-collected]');if(!target)return;if(target.dataset.action==='open-import')openImport();else if(target.dataset.action==='close-import'){if(!ocrBusy)closeImport()}else if(target.dataset.action==='confirm-import'){if(!ocrBusy)confirmImport()}else if(target.dataset.action==='location')toast('Location estimate: Nanganallur, Chennai');else if(target.dataset.action==='language')toast('English selected');else if(target.dataset.action==='pay'){toast('Demo payment successful');setScreen('home')}else if(target.dataset.screen)setScreen(target.dataset.screen);else if(target.dataset.tab)setScreen(target.dataset.tab==='home'?'home':target.dataset.tab);else if(target.dataset.category){activeCategory=target.dataset.category;render()}else if(target.dataset.add){const p=catalog.find(p=>p.id===target.dataset.add);if(p)addItem({name:p.name,variant:p.name.split(' - ').pop(),aisle:p.aisle,bay:p.bay,shelf:p.shelf,price:p.price,image:p.image});if(screen==='list')render()}else if(target.dataset.remove){list=list.filter(i=>i.id!==target.dataset.remove);persist();render()}else if(target.dataset.collected){list=list.map(i=>i.id===target.dataset.collected?{...i,collected:!i.collected}:i);persist();render()}});
-document.addEventListener('input',e=>{if(e.target.id==='search'){const pos=e.target.selectionStart;query=e.target.value;render();const field=document.getElementById('search');field.focus();field.setSelectionRange(pos,pos)}});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!ocrBusy)closeImport()});render();
-</script>
+<body class="flex items-center justify-center min-h-screen p-0 sm:p-4">
+  <div class="app-container w-full bg-walmart-bg rounded-none sm:rounded-[40px] overflow-hidden flex flex-col relative border-0 sm:border-[8px] sm:border-slate-800">
+    <div class="bg-walmart-blue text-white px-6 pt-2 pb-1 flex justify-between items-center text-xs font-semibold z-50 shrink-0">
+      <span>9:41</span>
+      <div class="flex items-center space-x-1.5">
+        <i class="fa-solid fa-signal text-[10px]"></i>
+        <i class="fa-solid fa-wifi text-[10px]"></i>
+        <i class="fa-solid fa-battery-full text-xs"></i>
+      </div>
+    </div>
+
+    <header id="app-header" class="bg-walmart-blue text-white px-4 py-2.5 flex items-center justify-between shadow-sm z-40 shrink-0">
+      <div class="flex items-center space-x-3">
+        <!-- Creative SVG logo: Cart + Pin + Spark -->
+        <div class="flex items-center space-x-2">
+          <svg class="cartkb-logo" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="g1" x1="0%" x2="100%" y1="0%" y2="100%">
+                <stop offset="0%" stop-color="#0071DC"/>
+                <stop offset="100%" stop-color="#041E42"/>
+              </linearGradient>
+              <linearGradient id="g2" x1="0%" x2="100%" y1="0%" y2="100%">
+                <stop offset="0%" stop-color="#FFC220"/>
+                <stop offset="100%" stop-color="#E0A812"/>
+              </linearGradient>
+            </defs>
+            <rect x="2" y="10" width="40" height="28" rx="4" fill="url(#g1)" />
+            <path d="M10 38a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm24 0a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" fill="#fff" opacity="0.9" />
+            <path d="M42 8c0 6-6 12-8 16-2-4-8-10-8-16 0-4 4-8 8-8s8 4 8 8z" fill="url(#g2)" transform="translate(6,2) scale(.7)" />
+            <circle cx="46" cy="18" r="3" fill="#FFC220" />
+          </svg>
+          <div>
+            <div class="text-xl font-extrabold tracking-tight logo-text">Cart<span class="text-walmart-yellow">KB</span></div>
+            <div class="text-[10px] text-white/80">Hyper-local • Nanganallur</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <button onclick="openUploadListModal()" class="bg-white/15 hover:bg-white/25 text-white text-xs font-extrabold px-3 py-1 rounded-full border border-white/20 flex items-center space-x-2">
+          <i class="fa-solid fa-image text-[11px] text-walmart-yellow"></i>
+          <span>Upload List</span>
+        </button>
+        <button onclick="openLanguageModal()" class="bg-white/15 hover:bg-white/25 text-white text-xs font-extrabold px-3 py-1 rounded-full border border-white/20 flex items-center space-x-2">
+          <i class="fa-solid fa-globe text-[11px] text-walmart-yellow"></i>
+          <span id="active-lang-code">EN</span>
+        </button>
+      </div>
+    </header>
+
+    <div id="gps-location-banner" class="bg-walmart-navy text-white px-4 py-2 text-xs flex justify-between items-center z-30 shrink-0 shadow-inner">
+      <div class="flex items-center space-x-2 truncate pr-2">
+        <i class="fa-solid fa-location-dot text-walmart-yellow animate-pulse text-xs"></i>
+        <div class="truncate">
+          <div class="text-[11px] font-bold">Estimated location</div>
+          <div id="detected-address" class="text-[11px] text-white/90 truncate">Detecting...</div>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2">
+        <a id="maps-link" class="text-[10px] font-bold text-white/90 underline hidden" target="_blank" rel="noopener">View on Maps</a>
+        <button onclick="refreshGPSLocation()" class="bg-white/15 hover:bg-white/30 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0 border border-white/20">Refresh</button>
+      </div>
+    </div>
+
+    <main id="main-viewport" class="flex-1 overflow-y-auto custom-scroll relative flex flex-col">
+      <section id="screen-landing" class="p-4 space-y-4 flex-1 flex flex-col justify-between">
+        <div class="space-y-4">
+          <div class="bg-blue-50 border border-blue-200 rounded-2xl p-3 flex items-center justify-between shadow-sm">
+            <div class="flex items-center space-x-3"><div class="w-9 h-9 bg-walmart-blue text-white rounded-xl flex items-center justify-center font-bold text-sm shadow-sm shrink-0"><i class="fa-solid fa-cart-shopping"></i></div>
+            <div>
+              <div class="flex items-center space-x-1.5"><span class="text-xs font-black text-walmart-navy" id="txt-location-city">Chennai, TN</span><span class="text-[9px] text-gray-400">• Approx</span></div>
+              <div class="text-[10px] text-gray-500">Location is estimated from your device (permission required)</div>
+            </div>
+            </div>
+          </div>
+
+          <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 p-4 text-walmart-navy shadow-md border border-amber-300">
+            <div class="relative z-10 space-y-1"><span class="bg-walmart-navy text-walmart-yellow text-[9px] font-black uppercase px-2 py-0.5 rounded-full inline-block">🪔 Diwali & Festive Deals</span>
+            <h3 class="text-base font-black tracking-tight leading-tight">Grand Festive Super Savings!</h3>
+            <p class="text-[11px] font-bold text-walmart-navy/90">Up to 50% OFF + BOGO on Sweets, Oils & Puja Essentials</p>
+            <div class="pt-2 flex items-center space-x-2"><span class="bg-white/90 text-walmart-navy px-3 py-1 rounded-full text-[10px] font-black shadow-sm"><i class="fa-solid fa-tag text-walmart-blue mr-1"></i>Festival Offers</span>
+            </div>
+            <i class="fa-solid fa-sparkles text-6xl text-white/20 absolute -right-2 -bottom-2 pointer-events-none"></i>
+          </div>
+
+          <div class="space-y-2.5">
+            <div class="flex justify-between items-center"><h3 class="text-xs font-black text-walmart-navy uppercase tracking-wider">Nearby Verified Stores</h3><span class="text-[10px] font-bold text-gray-400">Within 2.5 km</span></div>
+            <div onclick="selectStoreAndProceed('Nilgiris Supermarket')" class="bg-white p-3.5 rounded-3xl border-2 border-walmart-blue shadow-sm hover:shadow-md transition-all cursor-pointer relative">
+              <span class="absolute top-3 right-3 bg-walmart-blue text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase">Closest Store</span>
+              <div class="flex items-center space-x-3"><img src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=100&auto=format&fit=crop&q=80" alt="Supermarket" class="w-12 h-12 rounded-2xl object-cover border border-gray-100">
+                <div>
+                  <div class="font-extrabold text-xs text-walmart-navy">Nilgiris Supermarket</div>
+                  <div class="text-[10px] text-gray-500">1st Main Road, Nanganallur • 0.4 km</div>
+                </div>
+              </div>
+            </div>
+            <div onclick="selectStoreAndProceed('Reliance Smart Point')" class="bg-white p-3.5 rounded-3xl border border-gray-200 shadow-sm hover:border-walmart-blue transition-all cursor-pointer">
+              <div class="flex items-center space-x-3"><img src="https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=100&auto=format&fit=crop&q=80" alt="Superstore" class="w-12 h-12 rounded-2xl object-cover border border-gray-100">
+                <div>
+                  <div class="font-extrabold text-xs text-walmart-navy">Reliance Smart Point</div>
+                  <div class="text-[10px] text-gray-500">48th Street, Nanganallur • 0.7 km</div>
+                </div>
+              </div>
+            </div>
+            <div onclick="selectStoreAndProceed('V V Mart')" class="bg-white p-3.5 rounded-3xl border border-gray-200 shadow-sm hover:border-walmart-blue transition-all cursor-pointer">
+              <div class="flex items-center space-x-3"><img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=100&auto=format&fit=crop&q=80" alt="Market" class="w-12 h-12 rounded-2xl object-cover border border-gray-100">
+                <div>
+                  <div class="font-extrabold text-xs text-walmart-navy">V V Mart</div>
+                  <div class="text-[10px] text-gray-500">1st Main Road, Nanganallur • 0.8 km</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 pt-2">
+            <div onclick="startHomeJourney()" class="bg-white p-3.5 rounded-3xl border border-gray-200 shadow-sm hover:border-walmart-blue cursor-pointer text-center space-y-1">
+              <div class="w-10 h-10 bg-blue-50 text-walmart-blue rounded-2xl flex items-center justify-center font-black mx-auto text-base"><i class="fa-solid fa-house-user"></i></div>
+              <h4 class="text-xs font-black text-walmart-navy">Start at Home</h4>
+              <p class="text-[9px] text-gray-500">Upload list & shop</p>
+            </div>
+            <div onclick="startInStoreJourney()" class="bg-white p-3.5 rounded-3xl border border-gray-200 shadow-sm hover:border-walmart-blue cursor-pointer text-center space-y-1">
+              <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center font-black mx-auto text-base"><i class="fa-solid fa-store"></i></div>
+              <h4 class="text-xs font-black text-walmart-navy">In-Store Now</h4>
+              <p class="text-[9px] text-gray-500">QR Scan & AR Nav</p>
+            </div>
+          </div>
+        </div>
+        <div class="text-center text-[10px] text-gray-400 font-medium pb-2">CartKB • Smart cart from home to aisle</div>
+      </section>
+
+      <section id="screen-home-search" class="p-4 space-y-3.5 flex-1 flex flex-col hidden">
+        <div class="flex justify-between items-center">
+          <div>
+            <span class="bg-blue-100 text-walmart-blue text-[9px] font-black uppercase px-2.5 py-0.5 rounded-full">Home Shopping</span>
+            <h2 class="text-base font-black text-walmart-navy mt-1">Search & Add to Cart</h2>
+          </div>
+          <button onclick="openUploadListModal()" class="bg-walmart-yellow text-walmart-navy text-[10px] font-black px-3 py-1.5 rounded-full">Upload List</button>
+        </div>
+
+        <div class="relative">
+          <input type="text" id="home-product-search" value="Milk" onkeyup="renderHomeSearchResults()" class="w-full pl-9 pr-24 py-2.5 bg-white border-2 border-walmart-blue rounded-2xl text-xs font-extrabold text-walmart-navy" />
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-walmart-blue text-xs"></i>
+          <button onclick="renderHomeSearchResults()" class="absolute right-1.5 top-1.5 bg-walmart-yellow text-walmart-navy font-black text-xs px-3 py-1.5 rounded-xl">Search</button>
+        </div>
+
+        <div id="home-search-results" class="space-y-3 flex-1 overflow-y-auto custom-scroll pr-0.5"></div>
+      </section>
+
+      <section id="screen-store-select" class="p-4 space-y-4 flex-1 flex flex-col justify-between hidden">
+        <div class="space-y-4">
+          <div>
+            <span class="bg-amber-100 text-amber-800 text-[9px] font-black uppercase px-2.5 py-0.5 rounded-full">In-Store Mode</span>
+            <h2 class="text-base font-black text-walmart-navy mt-1">Select or Scan Store</h2>
+            <p class="text-xs text-gray-500">Choose your store location to calibrate AR navigation.</p>
+          </div>
+          <div class="bg-white p-4 rounded-3xl border border-gray-200 shadow-sm space-y-3">
+            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider">Nearby Supermarket</label>
+            <select id="store-dropdown-select" onchange="updateSelectedStore(this.value)" class="w-full p-3 bg-gray-50 border border-gray-300 rounded-2xl text-xs font-extrabold text-walmart-navy">
+              <option value="Main Street Supercenter">Main Street Supercenter (0.8 km • South Boag Rd)</option>
+              <option value="Saravana Stores Superstore">Saravana Stores Superstore (1.2 km • Ranganathan St)</option>
+              <option value="Nilgiris Supermarket">Nilgiris Supermarket (1.5 km • GN Chetty Rd)</option>
+            </select>
+          </div>
+          <div onclick="simulateQRStoreScan()" class="bg-blue-50/60 p-4 rounded-3xl border-2 border-dashed border-walmart-blue flex items-center justify-between cursor-pointer hover:bg-blue-100/60">
+            <div class="flex items-center space-x-3"><div class="w-10 h-10 bg-walmart-blue text-white rounded-2xl flex items-center justify-center text-lg font-black shrink-0 shadow-sm"><i class="fa-solid fa-qrcode"></i></div>
+            <div>
+              <div class="font-extrabold text-xs text-walmart-navy">Scan Entrance QR</div>
+              <div class="text-[10px] text-gray-500">Quick check-in for AR calibration</div>
+            </div>
+            </div>
+            <i class="fa-solid fa-camera text-walmart-blue text-base"></i>
+          </div>
+        </div>
+        <button onclick="confirmStoreSelection()" class="w-full bg-walmart-blue hover:bg-blue-800 text-white py-3 px-4 rounded-full font-black text-xs shadow-md transition-all">Confirm store & continue</button>
+      </section>
+
+    </main>
+
+    <footer id="app-bottom-nav" class="bg-white border-t border-gray-200 px-3 py-2 flex justify-around items-center z-40 shrink-0">
+      <button onclick="navTabClick('home')" id="nav-home" class="nav-btn text-walmart-blue flex flex-col items-center space-y-0.5"><i class="fa-solid fa-house text-base"></i><span class="text-[10px]">Home</span></button>
+      <button onclick="navTabClick('list')" id="nav-list" class="nav-btn text-gray-400 flex flex-col items-center space-y-0.5"><i class="fa-solid fa-list-check text-base"></i><span class="text-[10px]">List</span></button>
+      <button onclick="navTabClick('scan')" id="nav-scan" class="nav-btn text-gray-400 flex flex-col items-center space-y-0.5"><i class="fa-solid fa-qrcode text-base"></i><span class="text-[10px]">Scan</span></button>
+      <button onclick="openLanguageModal()" id="nav-more" class="nav-btn text-gray-400 flex flex-col items-center space-y-0.5"><i class="fa-solid fa-globe text-base"></i><span class="text-[10px]">More</span></button>
+    </footer>
+
+    <div id="upload-list-modal" class="absolute inset-0 bg-black/70 z-50 flex items-center justify-center p-4 hidden">
+      <div class="bg-white w-full max-w-md rounded-2xl p-4 space-y-3">
+        <div class="flex justify-between items-center"><h3 class="text-sm font-black text-walmart-navy">Upload handwritten list</h3><button onclick="closeUploadListModal()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">✕</button></div>
+        <p class="text-xs text-gray-500">Take a photo of your handwritten list or upload an image. We’ll help you convert it into cart items.</p>
+        <div class="space-y-2">
+          <input id="upload-list-input" accept="image/*" capture="environment" type="file" class="w-full" onchange="handleUploadListInput(event)">
+          <div id="upload-preview" class="hidden">
+            <img id="upload-preview-img" src="" class="w-full h-48 object-contain rounded-md border border-gray-200">
+            <label class="block text-xs font-bold mt-2">Recognized items</label>
+            <textarea id="recognized-items" class="w-full h-28 p-2 border rounded-md text-xs">Milk
+Bread
+Apple Cider Vinegar</textarea>
+            <div class="flex justify-end space-x-2 mt-2"><button onclick="closeUploadListModal()" class="px-3 py-1 rounded-md bg-gray-100 text-xs">Cancel</button><button onclick="addRecognizedItemsToList()" class="px-3 py-1 rounded-md bg-walmart-blue text-white text-xs">Add</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="language-modal" class="absolute inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+      <div class="bg-white w-full rounded-t-3xl sm:rounded-3xl p-5 space-y-4 shadow-2xl border border-gray-100 max-w-sm">
+        <div class="flex justify-between items-center border-b border-gray-100 pb-3"><h3 class="text-sm font-black text-walmart-navy">Select Language</h3><button onclick="closeLanguageModal()" class="w-8 h-8 rounded-full bg-gray-100">✕</button></div>
+        <div class="space-y-2">
+          <button onclick="setLanguage('en')" id="lang-btn-en" class="w-full p-3 bg-blue-50 border-2 border-walmart-blue rounded-2xl flex items-center justify-between text-xs font-black text-walmart-navy">English</button>
+          <button onclick="setLanguage('ta')" id="lang-btn-ta" class="w-full p-3 bg-gray-50 border-2 border-transparent rounded-2xl flex items-center justify-between text-xs font-bold text-walmart-navy">தமிழ் (Tamil)</button>
+          <button onclick="setLanguage('hi')" id="lang-btn-hi" class="w-full p-3 bg-gray-50 border-2 border-transparent rounded-2xl flex items-center justify-between text-xs font-bold text-walmart-navy">हिंदी (Hindi)</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast-box" class="absolute top-14 left-1/2 -translate-x-1/2 bg-walmart-navy text-white text-xs font-bold px-4 py-2 rounded-full shadow-2xl z-50 flex items-center space-x-2 border border-white/10 hidden">
+      <i id="toast-icon" class="fa-solid fa-circle-info text-walmart-yellow"></i>
+      <div id="toast-msg">Toast</div>
+    </div>
+  </div>
+
+  <script>
+    // If you want reverse geocoding from Google Maps, set your API key here.
+    // Leave empty to use a coords -> "View on Maps" link fallback.
+    const MAPS_API_KEY = '';
+
+    const baseCatalogTemplates = [
+      { name: 'Fresh Toned Milk', dept: 'Dairy', aisle: 'Aisle 1A', bay: 'Bay 3', shelf: 'Middle Shelf', img: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=200&auto=format&fit=crop&q=80' },
+      { name: 'Full Cream Cow Milk', dept: 'Dairy', aisle: 'Aisle 1A', bay: 'Bay 4', shelf: 'Lower Shelf', img: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=200&auto=format&fit=crop&q=80' },
+      { name: 'Apple Cider Vinegar', dept: 'Kitchen', aisle: 'Aisle 2B', bay: 'Bay 4', shelf: 'Middle Shelf', img: 'https://images.unsplash.com/photo-1598511726623-d7228a7e089d?w=200&auto=format&fit=crop&q=80' },
+      { name: 'Sunflower Cooking Oil', dept: 'Kitchen', aisle: 'Aisle 2A', bay: 'Bay 1', shelf: 'Lower Shelf', img: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=200&auto=format&fit=crop&q=80' },
+      { name: 'Kadalai Mittai / Peanut Chikki', dept: 'Snacks', aisle: 'Aisle 3C', bay: 'Bay 2', shelf: 'Middle Shelf', img: 'https://images.unsplash.com/photo-1599599810769-bcde5a160d32?w=200&auto=format&fit=crop&q=80' },
+      { name: 'Bathroom Floor Cleaner Liquid', dept: 'Bathroom', aisle: 'Aisle 4A', bay: 'Bay 3', shelf: 'Lower Shelf', img: 'https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?w=200&auto=format&fit=crop&q=80' },
+      { name: 'Paracetamol 650mg Strips', dept: 'Medical', aisle: 'Aisle 5A', bay: 'Bay 1', shelf: 'Top Shelf', img: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=200&auto=format&fit=crop&q=80' },
+      { name: 'Festive Camphor & Brass Lamp Pack', dept: 'Festival', aisle: 'Aisle 1C', bay: 'Bay 2', shelf: 'Special Display', img: 'https://images.unsplash.com/photo-1605371924599-2d0365d3d35f?w=200&auto=format&fit=crop&q=80' },
+      { name: 'Aromatic Lavender Room Spray', dept: 'Hall', aisle: 'Aisle 4C', bay: 'Bay 2', shelf: 'Top Shelf', img: 'https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?w=200&auto=format&fit=crop&q=80' },
+    ];
+    const variantMap = {
+      'fluid-small': [{ label: '250ml', price: 18 }, { label: '500ml (1/2L)', price: 32 }, { label: '1L', price: 60 }],
+      'fluid-vinegar': [{ label: '250ml', price: 145 }, { label: '500ml', price: 270 }, { label: '1L', price: 490 }],
+      'oil': [{ label: '500ml Pouch', price: 95 }, { label: '1L Pouch', price: 180 }, { label: '5L Can', price: 850 }],
+      'standard': [{ label: 'Standard Pack', price: 85 }, { label: 'Value Family Pack', price: 160 }],
+      'medical': [{ label: 'Strip of 10', price: 30 }, { label: 'Strip of 15', price: 45 }],
+      'sweets': [{ label: '250g Box', price: 150 }, { label: '500g Box', price: 280 }, { label: '1kg Box', price: 520 }]
+    };
+    const brands = ['Heritage', 'Aachi', 'Tata Simply', 'Fortune', 'Amul', 'Dabur', 'MTR', 'Saffola', 'Dettol', 'Himalaya'];
+    const catalogMasterDB = [];
+    let idCounter = 1;
+    for (let i = 0; i < 20; i++) {
+      baseCatalogTemplates.forEach(template => {
+        const brand = brands[i % brands.length];
+        const variants = variantMap[template.type] || variantMap.standard;
+        const basePrice = variants[0].price;
+        catalogMasterDB.push({
+          id: `p${idCounter++}`,
+          name: `${brand} ${template.name} #${i + 1}`,
+          dept: template.dept,
+          aisle: template.aisle,
+          bay: template.bay,
+          shelf: template.shelf,
+          image: template.img,
+          variants: variants,
+          storePrices: [
+            { store: 'Main Street Supercenter', price: basePrice, stock: 'In Stock' },
+            { store: 'Saravana Stores', price: Math.max(10, basePrice - 2), stock: 'In Stock' },
+            { store: 'Nilgiris Supermarket', price: basePrice + 3, stock: 'Low Stock' }
+          ]
+        });
+      });
+    }
+
+    let currentLang = 'en';
+    let currentActiveStore = 'Main Street Supercenter';
+    let userShoppingList = [
+      { id: 'l1', name: 'Fresh Toned Milk (500ml)', variant: '500ml (1/2L)', aisle: 'Aisle 1A', bay: 'Bay 3', shelf: 'Middle Shelf', price: 32, image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=200&auto=format&fit=crop&q=80' },
+    ];
+
+    function showScreen(screenId, hideBottomNav = false) {
+      const screens = ['screen-landing','screen-home-search','screen-store-select','screen-store-mode','screen-shopping-list','screen-browse-catalog','screen-ar-camera','screen-scan-pay','screen-payment-success'];
+      screens.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+      });
+      const current = document.getElementById(screenId);
+      if (current) current.classList.remove('hidden');
+      const backBtn = document.getElementById('header-back-btn');
+      if (backBtn) backBtn.classList.toggle('hidden', screenId === 'screen-landing');
+      const footer = document.getElementById('app-bottom-nav');
+      footer.classList.toggle('hidden', hideBottomNav || screenId === 'screen-ar-camera');
+      document.getElementById('main-viewport').scrollTop = 0;
+    }
+
+    function handleHeaderBack() { showScreen('screen-landing'); }
+
+    function navTabClick(tabKey) {
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('text-walmart-blue');
+        btn.classList.add('text-gray-400');
+      });
+      const activeBtn = document.getElementById(`nav-${tabKey}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-gray-400');
+        activeBtn.classList.add('text-walmart-blue');
+      }
+      if (tabKey === 'home') showScreen('screen-landing');
+      else if (tabKey === 'list') showScreen('screen-shopping-list');
+      else if (tabKey === 'scan') showScreen('screen-scan-pay');
+    }
+
+    // Reverse geocode + geolocation support
+    async function refreshGPSLocation() {
+      const addrEl = document.getElementById('detected-address');
+      const mapsLink = document.getElementById('maps-link');
+      addrEl.innerText = 'Detecting location...';
+      mapsLink.classList.add('hidden');
+      showToast('Fetching location', 'fa-location-dot');
+
+      if (!navigator.geolocation) {
+        addrEl.innerText = 'Geolocation not supported';
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        // If a Google Maps API key is provided, use reverse geocoding for a friendly address.
+        if (MAPS_API_KEY && MAPS_API_KEY.length > 5) {
+          try {
+            const res = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${MAPS_API_KEY}`);
+            const json = await res.json();
+            if (json && json.results && json.results.length) {
+              addrEl.innerText = json.results[0].formatted_address + ' (approx)';
+              mapsLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(json.results[0].formatted_address)}`;
+              mapsLink.classList.remove('hidden');
+              document.getElementById('txt-location-city').innerText = (json.results[0].address_components?.slice(-3).map(c=>c.short_name).join(', ') || 'Near you');
+              return;
+            }
+          } catch (e) {
+            console.warn('Geocode failed', e);
+          }
+        }
+        // Fallback: show coords + maps link
+        addrEl.innerText = `${lat.toFixed(5)}, ${lng.toFixed(5)} (tap View on Maps)`;
+        mapsLink.href = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+        mapsLink.classList.remove('hidden');
+        document.getElementById('txt-location-city').innerText = 'Nanganallur, Chennai';
+      }, (err) => {
+        console.warn('geolocation error', err);
+        addrEl.innerText = 'Location permission denied or unavailable';
+      }, { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 });
+    }
+
+    function selectStoreAndProceed(storeName) {
+      currentActiveStore = storeName;
+      // keep UI minimal: show store name in header or mode text where necessary
+      showScreen('screen-store-mode');
+      showToast(`Connected to ${storeName}`, 'fa-store');
+    }
+
+    function startHomeJourney() { showScreen('screen-home-search'); }
+    function startInStoreJourney() { showScreen('screen-store-select'); }
+    function updateSelectedStore(storeName) { currentActiveStore = storeName; }
+    function simulateQRStoreScan() { showToast('Store QR Code Scanned!', 'fa-qrcode'); confirmStoreSelection(); }
+    function confirmStoreSelection() { showScreen('screen-store-mode'); }
+    function openShoppingListMode() { showScreen('screen-shopping-list'); }
+    function openBrowseCatalogMode() { showScreen('screen-browse-catalog'); }
+
+    function openUploadListModal() { document.getElementById('upload-list-modal').classList.remove('hidden'); }
+    function closeUploadListModal() { document.getElementById('upload-list-modal').classList.add('hidden'); document.getElementById('upload-list-input').value=''; document.getElementById('upload-preview').classList.add('hidden'); }
+
+    function handleUploadListInput(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (evt) {
+        document.getElementById('upload-preview-img').src = evt.target.result;
+        document.getElementById('upload-preview').classList.remove('hidden');
+        const sample = 'Milk\nBread\nApple Cider Vinegar';
+        document.getElementById('recognized-items').value = sample;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function addRecognizedItemsToList() {
+      const text = document.getElementById('recognized-items').value.trim();
+      if (!text) return showToast('No items to add', 'fa-circle-exclamation');
+      const lines = text.split('\n').map(line => line.trim()).filter(Boolean);
+      let added = 0;
+      lines.forEach(line => {
+        const exact = catalogMasterDB.find(item => item.name.toLowerCase().includes(line.toLowerCase()));
+        if (exact) {
+          addItemToList(`${exact.name} (${exact.variants[0].label})`, exact.variants[0].label, exact.aisle, exact.bay, exact.shelf, exact.variants[0].price, exact.image);
+        } else {
+          addItemToList(line, 'Custom', 'Aisle 4D', 'Bay 1', 'Shelf', 120, 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200&auto=format&fit=crop&q=80');
+        }
+        added++;
+      });
+      closeUploadListModal();
+      showToast(`${added} items added to cart`, 'fa-cart-plus');
+    }
+
+    function addItemToList(name, variant, aisle, bay, shelf, price, image) {
+      userShoppingList.push({
+        id: Date.now().toString() + Math.random(),
+        name,
+        variant,
+        aisle,
+        bay,
+        shelf,
+        price,
+        image,
+        collected: false
+      });
+      renderShoppingList();
+      renderScanCartSummary();
+    }
+
+    function addCustomItemToList() {
+      const input = document.getElementById('custom-list-input');
+      if (!input) return;
+      const value = input.value.trim();
+      if (!value) return;
+      addItemToList(value, 'Custom Item', 'Aisle 4D', 'Bay 1', 'Shelf', 120, 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200&auto=format&fit=crop&q=80');
+      input.value = '';
+      showToast('Added to cart', 'fa-cart-plus');
+    }
+
+    function renderShoppingList() {
+      const container = document.getElementById('shopping-list-container');
+      if (!container) return;
+      const total = userShoppingList.reduce((sum, item) => sum + Number(item.price || 0), 0);
+      container.innerHTML = userShoppingList.map(item => `
+        <div class="bg-white p-3 rounded-2xl border border-gray-200 flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <img src="${item.image}" class="w-12 h-12 rounded-xl object-cover border border-gray-200" alt="${item.name}">
+            <div>
+              <div class="font-extrabold text-xs text-walmart-navy">${item.name}</div>
+              <div class="text-[10px] text-gray-500">${item.aisle} • ${item.bay}</div>
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="font-black text-walmart-navy">₹${item.price}</div>
+            <button onclick="removeItemFromList('${item.id}')" class="text-[10px] text-gray-400 underline">Remove</button>
+          </div>
+        </div>
+      `).join('');
+      const summary = document.getElementById('list-items-summary');
+      if (summary) summary.innerText = `${userShoppingList.length} items • Estimated ₹${total}`;
+    }
+
+    function removeItemFromList(id) {
+      userShoppingList = userShoppingList.filter(item => item.id !== id);
+      renderShoppingList();
+      renderScanCartSummary();
+    }
+
+    function renderHomeSearchResults() {
+      const query = document.getElementById('home-product-search').value.toLowerCase().trim();
+      const container = document.getElementById('home-search-results');
+      const filtered = catalogMasterDB.filter(item => {
+        return item.name.toLowerCase().includes(query) || item.dept.toLowerCase().includes(query);
+      }).slice(0, 20);
+
+      container.innerHTML = filtered.map(item => `
+        <div class="bg-white rounded-3xl p-3.5 border border-gray-200 shadow-sm space-y-3">
+          <div class="flex items-start space-x-3">
+            <img src="${item.image}" alt="${item.name}" class="w-14 h-14 rounded-2xl object-cover shrink-0 border border-gray-200">
+            <div class="flex-1">
+              <div class="flex justify-between items-start">
+                <div>
+                  <h4 class="font-extrabold text-xs text-walmart-navy">${item.name}</h4>
+                  <p class="text-[10px] text-gray-500">${item.dept} • <span class="text-walmart-green font-bold">In Stock</span></p>
+                </div>
+                <span class="text-xs font-black text-walmart-navy">₹${item.variants[0].price}</span>
+              </div>
+              <p class="text-[10px] text-walmart-blue font-bold mt-1">${item.aisle} • ${item.bay}</p>
+            </div>
+          </div>
+          <div class="pt-2 border-t border-gray-100 flex items-center justify-between">
+            <span class="text-[10px] font-bold text-gray-500">Size:</span>
+            <div class="flex space-x-1 overflow-x-auto no-scrollbar">
+              ${item.variants.map(v => `
+                <button onclick="addItemToList('${item.name} (${v.label})','${v.label}','${item.aisle}','${item.bay}','${item.shelf}',${v.price},'${item.image}')" class="px-2 py-1 bg-gray-50 hover:bg-gray-100 rounded-lg text-[10px] font-bold">${v.label} (₹${v.price})</button>
+              `).join('')}
+            </div>
+          </div>
+          <div class="pt-2">
+            <button onclick="togglePriceCompareDrawer('${item.id}')" class="w-full bg-blue-50/80 hover:bg-blue-100/80 text-walmart-blue text-[10px] font-extrabold py-1.5 px-3 rounded-xl flex items-center justify-between">
+              <span><i class="fa-solid fa-eye mr-1.5"></i>View Prices & Add</span>
+              <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div id="compare-drawer-${item.id}" class="hidden bg-gray-50 p-2.5 rounded-2xl border border-gray-200 space-y-1.5 text-[10px]">
+              ${item.storePrices.map(sp => `
+                <div class="flex justify-between items-center bg-white p-2 rounded-xl border border-gray-100">
+                  <div>
+                    <span class="font-bold text-walmart-navy">${sp.store}</span>
+                    <span class="text-[9px] text-gray-400 block">${sp.stock}</span>
+                  </div>
+                  <div class="text-right">
+                    <span class="font-black text-walmart-navy">₹${sp.price}</span>
+                    <button onclick="selectStoreAndProceed('${sp.store}')" class="text-[9px] font-bold text-walmart-blue block underline">Select Store</button>
+                    <button onclick="addItemToList('${item.name} - ${sp.store}','${item.variants[0].label}','${item.aisle}','${item.bay}','${item.shelf}',${sp.price},'${item.image}')" class="text-[9px] font-bold text-walmart-blue block underline">Add</button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function togglePriceCompareDrawer(itemId) {
+      const drawer = document.getElementById(`compare-drawer-${itemId}`);
+      if (drawer) drawer.classList.toggle('hidden');
+    }
+
+    function renderBrowseCatalog() {
+      const query = document.getElementById('catalog-search-input')?.value?.toLowerCase()?.trim() || '';
+      const container = document.getElementById('browse-catalog-container');
+      if (!container) return;
+      const filtered = catalogMasterDB.filter(item => {
+        return !query || item.name.toLowerCase().includes(query) || item.dept.toLowerCase().includes(query);
+      }).slice(0, 30);
+
+      container.innerHTML = filtered.map(item => `
+        <div class="bg-white p-3 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <img src="${item.image}" class="w-12 h-12 rounded-xl object-cover border border-gray-200" alt="${item.name}">
+            <div>
+              <div class="font-extrabold text-xs text-walmart-navy">${item.name}</div>
+              <div class="text-[10px] text-gray-500">${item.aisle} • ${item.bay}</div>
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="font-black text-walmart-navy">₹${item.variants[0].price}</div>
+            <button onclick="addItemToList('${item.name} (${item.variants[0].label})','${item.variants[0].label}','${item.aisle}','${item.bay}','${item.shelf}',${item.variants[0].price},'${item.image}')" class="text-[10px] font-bold text-walmart-blue underline">Add</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function startARNavigation() {
+      if (!userShoppingList.length) {
+        showToast('Add items first', 'fa-cart-plus');
+        return;
+      }
+      const firstItem = userShoppingList[0];
+      // set AR pin details if present
+      showScreen('screen-ar-camera', true);
+      showToast('AR route generated', 'fa-location-dot');
+    }
+
+    function markARItemCollected() {
+      showToast('Item collected!', 'fa-check');
+      setTimeout(() => showScreen('screen-scan-pay'), 700);
+    }
+
+    function exitARCamera() { showScreen('screen-shopping-list'); }
+
+    function renderScanCartSummary() {
+      const container = document.getElementById('scan-cart-items-list');
+      if (!container) return;
+      const total = userShoppingList.reduce((sum, item) => sum + Number(item.price || 0), 0);
+      const countEl = document.getElementById('scan-cart-count');
+      const totalEl = document.getElementById('scan-cart-total-price');
+      if (countEl) countEl.innerText = `${userShoppingList.length} item${userShoppingList.length === 1 ? '' : 's'}`;
+      if (totalEl) totalEl.innerText = `₹${total.toFixed(2)}`;
+      container.innerHTML = userShoppingList.map(item => `
+        <div class="flex justify-between items-center">
+          <div>
+            <div class="font-bold text-walmart-navy">${item.name}</div>
+            <div class="text-[10px] text-gray-400">${item.aisle}</div>
+          </div>
+          <div class="text-right font-black">₹${item.price}</div>
+        </div>
+      `).join('');
+    }
+
+    function simulateBarcodeScan() {
+      showToast('Barcode scanned successfully', 'fa-barcode');
+      renderScanCartSummary();
+    }
+
+    function processUPIPayment() {
+      showScreen('screen-payment-success');
+      const total = userShoppingList.reduce((sum, item) => sum + Number(item.price || 0), 0);
+      const paidEl = document.getElementById('success-total-paid');
+      if (paidEl) paidEl.innerText = `₹${total.toFixed(2)} paid via UPI`;
+      showToast('Payment Successful!', 'fa-check');
+    }
+
+    function resetAppToHome() { showScreen('screen-landing'); navTabClick('home'); }
+
+    function openLanguageModal() { document.getElementById('language-modal').classList.remove('hidden'); }
+    function closeLanguageModal() { document.getElementById('language-modal').classList.add('hidden'); }
+    function setLanguage(lang) { currentLang = lang; document.getElementById('active-lang-code').innerText = lang.toUpperCase(); closeLanguageModal(); showToast(`Language set: ${lang.toUpperCase()}`, 'fa-globe'); }
+
+    function showToast(msg, icon = 'fa-circle-info') {
+      const box = document.getElementById('toast-box');
+      const msgEl = document.getElementById('toast-msg');
+      const iconEl = document.getElementById('toast-icon');
+      if (!box || !msgEl || !iconEl) return;
+      msgEl.innerText = msg;
+      iconEl.className = `fa-solid ${icon} text-walmart-yellow`;
+      box.classList.remove('hidden');
+      setTimeout(() => box.classList.add('hidden'), 1800);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderHomeSearchResults();
+      renderBrowseCatalog();
+      renderShoppingList();
+      renderScanCartSummary();
+      showScreen('screen-landing');
+      // attempt to fetch GPS/location on load
+      refreshGPSLocation();
+    });
+  </script>
 </body>
 </html>
